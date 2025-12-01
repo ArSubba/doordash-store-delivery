@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Customer Store - Delivery System</title>
+    <title>Walmart Grocery - Online Shopping & Delivery</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -11,16 +11,21 @@
           extend: {
             colors: {
               primary: {
-                50: "#fef2f2",
-                100: "#fee2e2",
-                200: "#fecaca",
-                300: "#fca5a5",
-                400: "#f87171",
-                500: "#ef4444",
-                600: "#dc2626",
-                700: "#b91c1c",
-                800: "#991b1b",
-                900: "#7f1d1d",
+                50: "#eff6ff",
+                100: "#dbeafe",
+                200: "#bfdbfe",
+                300: "#93c5fd",
+                400: "#60a5fa",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                800: "#1e40af",
+                900: "#1e3a8a",
+              },
+              walmart: {
+                blue: "#0071ce",
+                yellow: "#ffc220",
+                lightblue: "#004c91",
               },
             },
           },
@@ -30,13 +35,13 @@
   </head>
   <body class="bg-gray-50">
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b sticky top-0 z-40">
+    <header class="bg-walmart-blue shadow-sm border-b sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
             <button
               onclick="window.location.href='index.html'"
-              class="flex items-center text-gray-600 hover:text-gray-900 mr-4"
+              class="flex items-center text-white hover:text-walmart-yellow mr-6"
             >
               <svg
                 class="h-5 w-5 mr-1"
@@ -53,13 +58,18 @@
               </svg>
               Back
             </button>
-            <h1 class="text-xl font-bold text-gray-900">Our Menu</h1>
+            <div class="flex items-center">
+              <h1 class="text-2xl font-bold text-white">Walmart</h1>
+              <span class="text-walmart-yellow text-lg ml-2 font-medium"
+                >Grocery</span
+              >
+            </div>
           </div>
 
           <!-- Cart Button -->
           <button
             onclick="toggleCart()"
-            class="relative bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 flex items-center gap-2"
+            class="relative bg-walmart-yellow text-walmart-blue px-4 py-2 rounded-lg hover:bg-yellow-300 flex items-center gap-2 font-medium"
           >
             <svg
               class="h-5 w-5"
@@ -122,16 +132,25 @@
 
       <!-- Store Info -->
       <div
-        class="bg-white rounded-lg shadow-sm p-6 mb-8 cursor-pointer hover:shadow-md transition-shadow"
+        class="bg-gradient-to-r from-walmart-blue to-walmart-lightblue rounded-lg shadow-lg p-6 mb-8 cursor-pointer hover:shadow-xl transition-all transform hover:-translate-y-1"
         onclick="showAllProducts()"
       >
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900">DeliveryStore</h2>
-            <div class="flex items-center gap-4 mt-2 text-sm text-gray-600">
+            <div class="flex items-center gap-3 mb-2">
+              <h2 class="text-3xl font-bold text-white">Walmart</h2>
+              <span
+                class="bg-walmart-yellow text-walmart-blue px-3 py-1 rounded-full text-sm font-bold"
+                >Grocery</span
+              >
+            </div>
+            <p class="text-blue-100 text-lg mb-3">
+              Save money. Live better. Shop online.
+            </p>
+            <div class="flex items-center gap-4 text-sm text-blue-100">
               <div class="flex items-center gap-1">
                 <svg
-                  class="h-4 w-4 fill-yellow-400 text-yellow-400"
+                  class="h-4 w-4 fill-walmart-yellow text-walmart-yellow"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -139,7 +158,7 @@
                     d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
                   ></path>
                 </svg>
-                <span>4.5 (500+ reviews)</span>
+                <span>4.8 (25,000+ reviews)</span>
               </div>
               <div class="flex items-center gap-1">
                 <svg
@@ -155,7 +174,7 @@
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   ></path>
                 </svg>
-                <span>30-45 min delivery</span>
+                <span>Free delivery on $35+</span>
               </div>
               <div class="flex items-center gap-1">
                 <svg
@@ -177,17 +196,17 @@
                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                   ></path>
                 </svg>
-                <span>2.5 km away</span>
+                <span>Pickup & delivery available</span>
               </div>
             </div>
           </div>
           <div class="text-right">
             <div
-              class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium"
+              class="bg-walmart-yellow text-walmart-blue px-4 py-2 rounded-full text-sm font-bold"
             >
-              Open
+              Shop Now
             </div>
-            <p class="text-sm text-gray-600 mt-1">Closes at 11:00 PM</p>
+            <p class="text-blue-100 text-sm mt-1">Click to browse products</p>
           </div>
         </div>
       </div>
@@ -546,8 +565,8 @@
                     data-category="${category}"
                     class="category-btn px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                       category === selectedCategory
-                        ? "bg-primary-500 text-white"
-                        : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-300"
+                        ? "bg-walmart-blue text-white shadow-lg"
+                        : "bg-white text-gray-600 hover:bg-gray-50 border-2 border-gray-200 hover:border-walmart-blue"
                     }">
                     ${category}
                 </button>
@@ -622,20 +641,30 @@
         container.innerHTML = sortedProducts
           .map(
             (product) => `
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                    <img src="${
-                      product.image ||
-                      "https://via.placeholder.com/400x200?text=No+Image"
-                    }" 
-                         alt="${product.name}" class="w-full h-48 object-cover">
+                <div class="bg-white rounded-lg border border-gray-200 hover:border-walmart-blue hover:shadow-lg transition-all duration-200">
+                    <div class="relative">
+                        <img src="${
+                          product.image ||
+                          "https://via.placeholder.com/300x200?text=No+Image&color=0071ce"
+                        }" 
+                             alt="${
+                               product.name
+                             }" class="w-full h-48 object-cover rounded-t-lg">
+                        <div class="absolute top-2 left-2">
+                            <span class="bg-walmart-blue text-white text-xs px-2 py-1 rounded-full font-medium">${
+                              product.category
+                            }</span>
+                        </div>
+                    </div>
                     <div class="p-4">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-semibold text-lg">${
-                              product.name
-                            }</h3>
-                            <span class="text-lg font-bold text-primary-600">$${parseFloat(
+                        <h3 class="font-medium text-gray-900 mb-2 text-sm leading-tight">${
+                          product.name
+                        }</h3>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xl font-bold text-walmart-blue">$${parseFloat(
                               product.price
                             ).toFixed(2)}</span>
+                            <span class="text-xs text-green-600 font-medium">Great Value</span>
                         </div>
                         
                         <p class="text-gray-600 text-sm mb-3 line-clamp-2">${
@@ -661,9 +690,9 @@
                         </div>
 
                         <button onclick="addToCart('${product.id}')" 
-                            class="w-full bg-primary-500 text-white py-2 px-4 rounded-lg font-medium hover:bg-primary-600 flex items-center justify-center gap-2">
+                            class="w-full bg-walmart-yellow text-walmart-blue py-2 px-4 rounded-lg font-bold hover:bg-yellow-300 transition-colors flex items-center justify-center gap-2 border-2 border-walmart-yellow">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
                             Add to Cart
                         </button>
