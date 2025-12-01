@@ -2,30 +2,9 @@ const { Pool } = require('pg');
 
 class CloudDatabase {
     constructor() {
-        // Use Heroku PostgreSQL connection or local fallback
-        const connectionConfig = {
+        this.pool = new Pool({
             connectionString: process.env.DATABASE_URL,
             ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-        };
-
-        // If DATABASE_URL is not available, try individual env vars
-        if (!process.env.DATABASE_URL && process.env.NODE_ENV === 'production') {
-            connectionConfig = {
-                host: process.env.DB_HOST || 'localhost',
-                port: process.env.DB_PORT || 5432,
-                database: process.env.DB_NAME || 'postgres',
-                user: process.env.DB_USER || 'postgres',
-                password: process.env.DB_PASSWORD || '',
-                ssl: { rejectUnauthorized: false }
-            };
-        }
-
-        this.pool = new Pool(connectionConfig);
-        
-        console.log('Database connection config:', {
-            hasConnectionString: !!process.env.DATABASE_URL,
-            nodeEnv: process.env.NODE_ENV,
-            ssl: connectionConfig.ssl ? 'enabled' : 'disabled'
         });
         
         this.initializeDatabase();
