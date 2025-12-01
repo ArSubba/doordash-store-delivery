@@ -459,19 +459,6 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Serve HTML files
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
-app.get('/customer', (req, res) => {
-    res.sendFile(path.join(__dirname, 'customer.html'));
-});
-
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
