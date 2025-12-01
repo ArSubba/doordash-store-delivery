@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Store Delivery System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#fef2f2",
+                100: "#fee2e2",
+                200: "#fecaca",
+                300: "#fca5a5",
+                400: "#f87171",
+                500: "#ef4444",
+                600: "#dc2626",
+                700: "#b91c1c",
+                800: "#991b1b",
+                900: "#7f1d1d",
+              },
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <svg
+              class="h-8 w-8 text-primary-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              ></path>
+            </svg>
+            <span class="ml-2 text-xl font-bold text-gray-900"
+              >DeliveryStore</span
+            >
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Hero Section -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          Welcome to Your Store
+        </h1>
+        <p class="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+          Manage your delivery business with our comprehensive admin and
+          customer platform
+        </p>
+      </div>
+
+      <!-- Dashboard Cards -->
+      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <!-- Admin Dashboard Card -->
+        <div
+          class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-100 cursor-pointer group"
+          onclick="window.location.href='admin.html'"
+        >
+          <div
+            class="flex items-center justify-center w-16 h-16 bg-primary-100 rounded-xl mb-6 mx-auto group-hover:bg-primary-200 transition-colors"
+          >
+            <svg
+              class="h-8 w-8 text-primary-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              ></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              ></path>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900 text-center mb-4">
+            Admin Dashboard
+          </h2>
+          <p class="text-gray-600 text-center mb-6">
+            Manage your store, add products, set prices, track orders, and
+            control everything
+          </p>
+          <div class="space-y-3">
+            <div class="flex items-center text-sm text-gray-600">
+              <svg
+                class="h-4 w-4 text-primary-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                ></path>
+              </svg>
+              Add & manage products
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+              <svg
+                class="h-4 w-4 text-primary-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                ></path>
+              </svg>
+              Set prices & inventory
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+              <svg
+                class="h-4 w-4 text-primary-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                ></path>
+              </svg>
+              Process orders & payments
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+              <svg
+                class="h-4 w-4 text-primary-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                ></path>
+              </svg>
+              View analytics & reports
+            </div>
+          </div>
+          <div class="mt-6 text-center">
+            <span
+              class="text-primary-600 font-semibold group-hover:text-primary-700"
+            >
+              Access Admin Panel →
+            </span>
+          </div>
+        </div>
+
+        <!-- Customer Dashboard Card -->
+        <div
+          class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-gray-100 cursor-pointer group"
+          onclick="window.location.href='customer.html'"
+        >
+          <div
+            class="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-xl mb-6 mx-auto group-hover:bg-blue-200 transition-colors"
+          >
+            <svg
+              class="h-8 w-8 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              ></path>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900 text-center mb-4">
+            Customer Store
+          </h2>
+          <p class="text-gray-600 text-center mb-6">
+            Browse products, add items to cart, place orders, and track
+            deliveries
+          </p>
+          <div class="space-y-3">
+            <div class="flex items-center text-sm text-gray-600">
+              <svg
+                class="h-4 w-4 text-blue-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                ></path>
+              </svg>
+              Browse available products
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+              <svg
+                class="h-4 w-4 text-blue-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                ></path>
+              </svg>
+              Add items to cart
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+              <svg
+                class="h-4 w-4 text-blue-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                ></path>
+              </svg>
+              Secure checkout & payment
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+              <svg
+                class="h-4 w-4 text-blue-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                ></path>
+              </svg>
+              Real-time order tracking
+            </div>
+          </div>
+          <div class="mt-6 text-center">
+            <span class="text-blue-600 font-semibold group-hover:text-blue-700">
+              Start Shopping →
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features Section -->
+      <div class="mt-20 text-center">
+        <h3 class="text-2xl font-bold text-gray-900 mb-8">System Features</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="bg-white p-6 rounded-xl shadow-sm">
+            <div
+              class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4"
+            >
+              <svg
+                class="h-6 w-6 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                ></path>
+              </svg>
+            </div>
+            <h4 class="font-semibold mb-2">Real-time Updates</h4>
+            <p class="text-gray-600 text-sm">
+              Live order tracking and inventory updates
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-sm">
+            <div
+              class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4"
+            >
+              <svg
+                class="h-6 w-6 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                ></path>
+              </svg>
+            </div>
+            <h4 class="font-semibold mb-2">Easy Management</h4>
+            <p class="text-gray-600 text-sm">
+              Simple product and order management
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-sm">
+            <div
+              class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4"
+            >
+              <svg
+                class="h-6 w-6 text-purple-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                ></path>
+              </svg>
+            </div>
+            <h4 class="font-semibold mb-2">Customer Focus</h4>
+            <p class="text-gray-600 text-sm">
+              Smooth ordering and delivery experience
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Status -->
+      <div class="mt-12 text-center">
+        <div
+          id="api-status"
+          class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium"
+        >
+          <svg
+            class="animate-spin -ml-1 mr-3 h-4 w-4 text-gray-600"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          Checking API Status...
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Check API status
+      async function checkApiStatus() {
+        try {
+          const response = await fetch("http://localhost:3001/api/health");
+          const data = await response.json();
+          const statusDiv = document.getElementById("api-status");
+
+          if (data.success) {
+            statusDiv.innerHTML = `
+                        <svg class="h-4 w-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        API Server Connected
+                    `;
+            statusDiv.className =
+              "inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-green-100 text-green-800";
+          } else {
+            throw new Error("API not responding");
+          }
+        } catch (error) {
+          const statusDiv = document.getElementById("api-status");
+          statusDiv.innerHTML = `
+                    <svg class="h-4 w-4 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    API Server Offline - Start backend server
+                `;
+          statusDiv.className =
+            "inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-red-100 text-red-800";
+        }
+      }
+
+      // Check API status on page load
+      checkApiStatus();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Store Delivery System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#fef2f2",
+                100: "#fee2e2",
+                200: "#fecaca",
+                300: "#fca5a5",
+                400: "#f87171",
+                500: "#ef4444",
+                600: "#dc2626",
+                700: "#b91c1c",
+                800: "#991b1b",
+                900: "#7f1d1d",
+              },
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <button
+              onclick="window.location.href='index.html'"
+              class="flex items-center text-gray-600 hover:text-gray-900 mr-4"
+            >
+              <svg
+                class="h-5 w-5 mr-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                ></path>
+              </svg>
+              Back
+            </button>
+            <h1 class="text-xl font-bold text-gray-900">Admin Dashboard</h1>
+          </div>
+          <div class="text-sm text-gray-600">Store Management System</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Navigation Tabs -->
+      <div class="mb-8">
+        <div class="flex space-x-1 bg-gray-100 rounded-lg p-1">
+          <button
+            onclick="showTab('overview')"
+            id="tab-overview"
+            class="flex items-center gap-2 px-4 py-2 rounded-md transition-colors bg-white text-primary-600 shadow-sm"
+          >
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              ></path>
+            </svg>
+            Overview
+          </button>
+          <button
+            onclick="showTab('products')"
+            id="tab-products"
+            class="flex items-center gap-2 px-4 py-2 rounded-md transition-colors text-gray-600 hover:text-gray-900"
+          >
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              ></path>
+            </svg>
+            Products
+          </button>
+          <button
+            onclick="showTab('orders')"
+            id="tab-orders"
+            class="flex items-center gap-2 px-4 py-2 rounded-md transition-colors text-gray-600 hover:text-gray-900"
+          >
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              ></path>
+            </svg>
+            Orders
+          </button>
+        </div>
+      </div>
+
+      <!-- Overview Tab -->
+      <div id="overview-tab" class="tab-content">
+        <div class="space-y-6">
+          <!-- Stats Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm text-gray-600">Total Products</p>
+                  <p
+                    id="stats-products"
+                    class="text-2xl font-bold text-gray-900"
+                  >
+                    -
+                  </p>
+                </div>
+                <svg
+                  class="h-8 w-8 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm text-gray-600">Total Orders</p>
+                  <p id="stats-orders" class="text-2xl font-bold text-gray-900">
+                    -
+                  </p>
+                </div>
+                <svg
+                  class="h-8 w-8 text-green-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm text-gray-600">Revenue Today</p>
+                  <p
+                    id="stats-revenue"
+                    class="text-2xl font-bold text-gray-900"
+                  >
+                    $0.00
+                  </p>
+                </div>
+                <svg
+                  class="h-8 w-8 text-yellow-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm text-gray-600">Active Customers</p>
+                  <p
+                    id="stats-customers"
+                    class="text-2xl font-bold text-gray-900"
+                  >
+                    -
+                  </p>
+                </div>
+                <svg
+                  class="h-8 w-8 text-purple-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Orders -->
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <h3 class="text-lg font-semibold mb-4">Recent Orders</h3>
+            <div id="recent-orders" class="space-y-3">
+              <div class="text-center py-4 text-gray-500">
+                Loading orders...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Tab -->
+      <div id="products-tab" class="tab-content hidden">
+        <div class="space-y-6">
+          <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-gray-900">Product Management</h2>
+            <button
+              onclick="openProductModal()"
+              class="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 flex items-center gap-2"
+            >
+              <svg
+                class="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                ></path>
+              </svg>
+              Add Product
+            </button>
+          </div>
+
+          <div
+            id="products-grid"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            <div class="text-center py-8 text-gray-500">
+              Loading products...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders Tab -->
+      <div id="orders-tab" class="tab-content hidden">
+        <div class="space-y-6">
+          <h2 class="text-2xl font-bold text-gray-900">Order Management</h2>
+
+          <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+              <h3 class="text-lg font-medium">All Orders</h3>
+            </div>
+            <div id="orders-list" class="divide-y divide-gray-200">
+              <div class="text-center py-8 text-gray-500">
+                Loading orders...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div
+      id="product-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold" id="modal-title">
+            Add New Product
+          </h3>
+          <button
+            onclick="closeProductModal()"
+            class="p-1 hover:bg-gray-100 rounded"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <form id="product-form" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Product Name</label>
+            <input
+              type="text"
+              id="product-name"
+              class="w-full p-2 border rounded-lg"
+              required
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Description</label>
+            <textarea
+              id="product-description"
+              class="w-full p-2 border rounded-lg h-20"
+              required
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Price ($)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="product-price"
+                class="w-full p-2 border rounded-lg"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Inventory</label>
+              <input
+                type="number"
+                id="product-inventory"
+                class="w-full p-2 border rounded-lg"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Category</label>
+            <select
+              id="product-category"
+              class="w-full p-2 border rounded-lg"
+              required
+            >
+              <option value="">Select Category</option>
+              <option value="Burgers">Burgers</option>
+              <option value="Pizza">Pizza</option>
+              <option value="Salads">Salads</option>
+              <option value="Drinks">Drinks</option>
+              <option value="Desserts">Desserts</option>
+              <option value="Appetizers">Appetizers</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Product Image</label>
+            <div class="space-y-3">
+              <!-- File Upload Option -->
+              <div
+                class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors"
+              >
+                <input
+                  type="file"
+                  id="product-image-file"
+                  class="hidden"
+                  accept="image/*"
+                  onchange="handleImageUpload(event)"
+                />
+                <label for="product-image-file" class="cursor-pointer">
+                  <div class="flex flex-col items-center">
+                    <svg
+                      class="h-8 w-8 text-gray-400 mb-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      ></path>
+                    </svg>
+                    <span class="text-sm text-gray-600"
+                      >Click to upload image from your computer</span
+                    >
+                    <span class="text-xs text-gray-400 mt-1"
+                      >PNG, JPG, GIF up to 5MB</span
+                    >
+                  </div>
+                </label>
+              </div>
+
+              <!-- Image Preview -->
+              <div id="image-preview" class="hidden">
+                <img
+                  id="preview-img"
+                  class="w-24 h-24 object-cover rounded-lg border"
+                  alt="Preview"
+                />
+                <button
+                  type="button"
+                  onclick="clearImage()"
+                  class="mt-2 text-sm text-red-500 hover:text-red-700"
+                >
+                  Remove image
+                </button>
+              </div>
+
+              <!-- OR Divider -->
+              <div class="flex items-center">
+                <div class="flex-1 border-t border-gray-300"></div>
+                <span class="px-3 text-sm text-gray-500 bg-white">OR</span>
+                <div class="flex-1 border-t border-gray-300"></div>
+              </div>
+
+              <!-- URL Input -->
+              <input
+                type="url"
+                id="product-image-url"
+                class="w-full p-2 border rounded-lg"
+                placeholder="Or paste image URL: https://example.com/image.jpg"
+                onchange="handleUrlChange()"
+              />
+            </div>
+            <input type="hidden" id="product-image" />
+          </div>
+
+          <div class="flex gap-2">
+            <button
+              type="submit"
+              class="flex-1 bg-primary-500 text-white py-2 px-4 rounded-lg hover:bg-primary-600 flex items-center justify-center gap-2"
+            >
+              <svg
+                class="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+              <span id="submit-text">Add Product</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = "http://localhost:3001/api";
+      let products = [];
+      let orders = [];
+      let editingProduct = null;
+
+      // Image upload handling
+      function handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+          alert("Image size must be less than 5MB");
+          return;
+        }
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById("preview-img").src = e.target.result;
+          document.getElementById("image-preview").classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+
+        // Upload file
+        const formData = new FormData();
+        formData.append("image", file);
+
+        fetch(`${API_BASE}/upload-image`, {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              document.getElementById("product-image").value = data.imageUrl;
+              document.getElementById("product-image-url").value = "";
+            } else {
+              alert("Upload failed: " + data.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Upload error:", error);
+            alert("Upload failed. Please try again.");
+          });
+      }
+
+      function handleUrlChange() {
+        const url = document.getElementById("product-image-url").value;
+        if (url) {
+          document.getElementById("product-image").value = url;
+          document.getElementById("product-image-file").value = "";
+          clearImagePreview();
+        }
+      }
+
+      function clearImage() {
+        document.getElementById("product-image-file").value = "";
+        document.getElementById("product-image-url").value = "";
+        document.getElementById("product-image").value = "";
+        clearImagePreview();
+      }
+
+      function clearImagePreview() {
+        document.getElementById("image-preview").classList.add("hidden");
+        document.getElementById("preview-img").src = "";
+      }
+
+      // Tab Management
+      function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll(".tab-content").forEach((tab) => {
+          tab.classList.add("hidden");
+        });
+
+        // Remove active styles from all tabs
+        document.querySelectorAll('[id^="tab-"]').forEach((tab) => {
+          tab.className =
+            "flex items-center gap-2 px-4 py-2 rounded-md transition-colors text-gray-600 hover:text-gray-900";
+        });
+
+        // Show selected tab and add active styles
+        document.getElementById(`${tabName}-tab`).classList.remove("hidden");
+        document.getElementById(`tab-${tabName}`).className =
+          "flex items-center gap-2 px-4 py-2 rounded-md transition-colors bg-white text-primary-600 shadow-sm";
+
+        // Load data for specific tabs
+        if (tabName === "products") {
+          loadProducts();
+        } else if (tabName === "orders") {
+          loadOrders();
+        } else if (tabName === "overview") {
+          loadAnalytics();
+        }
+      }
+
+      // Load Analytics Data
+      async function loadAnalytics() {
+        try {
+          const response = await fetch(`${API_BASE}/admin/analytics`);
+          const data = await response.json();
+
+          if (data.success) {
+            const stats = data.data.stats;
+            document.getElementById("stats-products").textContent =
+              stats.totalProducts;
+            document.getElementById("stats-orders").textContent =
+              stats.totalOrders;
+            document.getElementById(
+              "stats-revenue"
+            ).textContent = `$${stats.totalRevenue.toFixed(2)}`;
+            document.getElementById("stats-customers").textContent =
+              stats.activeCustomers;
+
+            // Display recent orders
+            displayRecentOrders(data.data.recentOrders);
+          }
+        } catch (error) {
+          console.error("Error loading analytics:", error);
+        }
+      }
+
+      function displayRecentOrders(recentOrders) {
+        const container = document.getElementById("recent-orders");
+        if (recentOrders.length === 0) {
+          container.innerHTML =
+            '<div class="text-center py-4 text-gray-500">No orders yet</div>';
+          return;
+        }
+
+        container.innerHTML = recentOrders
+          .map(
+            (order) => `
+                <div class="flex items-center justify-between py-3 border-b">
+                    <div>
+                        <p class="font-medium">Order #${order.id}</p>
+                        <p class="text-sm text-gray-600">${
+                          order.customerName
+                        }</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-medium">$${order.total.toFixed(2)}</p>
+                        <span class="inline-block px-2 py-1 text-xs rounded-full ${getStatusColor(
+                          order.status
+                        )}">
+                            ${order.status}
+                        </span>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Load Products
+      async function loadProducts() {
+        try {
+          const response = await fetch(`${API_BASE}/products`);
+          const data = await response.json();
+
+          if (data.success) {
+            products = data.data;
+            displayProducts();
+          }
+        } catch (error) {
+          console.error("Error loading products:", error);
+          document.getElementById("products-grid").innerHTML =
+            '<div class="text-center py-8 text-red-500">Error loading products</div>';
+        }
+      }
+
+      function displayProducts() {
+        const container = document.getElementById("products-grid");
+        if (products.length === 0) {
+          container.innerHTML =
+            '<div class="text-center py-8 text-gray-500">No products yet. Add your first product!</div>';
+          return;
+        }
+
+        container.innerHTML = products
+          .map(
+            (product) => `
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                    <img src="${
+                      product.image ||
+                      "https://via.placeholder.com/400x200?text=No+Image"
+                    }" 
+                         alt="${product.name}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-lg">${
+                              product.name
+                            }</h3>
+                            <span class="text-lg font-bold text-primary-600">$${product.price.toFixed(
+                              2
+                            )}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">${
+                          product.description
+                        }</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-sm bg-gray-100 px-2 py-1 rounded">${
+                              product.category
+                            }</span>
+                            <span class="text-sm px-2 py-1 rounded ${
+                              product.inStock
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }">
+                                ${
+                                  product.stock > 0 || product.inventory > 0
+                                    ? `${
+                                        product.stock || product.inventory || 0
+                                      } in stock`
+                                    : "Out of stock"
+                                }
+                            </span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editProduct('${product.id}')" 
+                                class="flex-1 bg-blue-500 text-white py-2 px-3 rounded hover:bg-blue-600 flex items-center justify-center gap-2">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                                Edit
+                            </button>
+                            <button onclick="deleteProduct('${product.id}')" 
+                                class="flex-1 bg-red-500 text-white py-2 px-3 rounded hover:bg-red-600 flex items-center justify-center gap-2">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Product Modal Management
+      function openProductModal(product = null) {
+        editingProduct = product;
+        const modal = document.getElementById("product-modal");
+        const title = document.getElementById("modal-title");
+        const submitText = document.getElementById("submit-text");
+
+        if (product) {
+          title.textContent = "Edit Product";
+          submitText.textContent = "Update Product";
+
+          // Fill form with product data
+          document.getElementById("product-name").value = product.name;
+          document.getElementById("product-description").value =
+            product.description;
+          document.getElementById("product-price").value = product.price;
+          document.getElementById("product-inventory").value =
+            product.stock || product.inventory || 0;
+          document.getElementById("product-category").value = product.category;
+
+          // Handle image display for editing
+          if (product.image) {
+            document.getElementById("product-image").value = product.image;
+            if (product.image.startsWith("http")) {
+              document.getElementById("product-image-url").value =
+                product.image;
+            }
+          }
+        } else {
+          title.textContent = "Add New Product";
+          submitText.textContent = "Add Product";
+          document.getElementById("product-form").reset();
+          clearImage();
+        }
+
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      }
+
+      function closeProductModal() {
+        const modal = document.getElementById("product-modal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        editingProduct = null;
+      }
+
+      function editProduct(productId) {
+        const product = products.find((p) => p.id === productId);
+        if (product) {
+          openProductModal(product);
+        }
+      }
+
+      async function deleteProduct(productId) {
+        if (!confirm("Are you sure you want to delete this product?")) return;
+
+        try {
+          const response = await fetch(
+            `${API_BASE}/admin/products/${productId}`,
+            {
+              method: "DELETE",
+            }
+          );
+
+          if (response.ok) {
+            loadProducts(); // Reload products
+            alert("Product deleted successfully!");
+          } else {
+            alert("Error deleting product");
+          }
+        } catch (error) {
+          console.error("Error deleting product:", error);
+          alert("Error deleting product");
+        }
+      }
+
+      // Product Form Submission
+      document
+        .getElementById("product-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const formData = {
+            name: document.getElementById("product-name").value,
+            description: document.getElementById("product-description").value,
+            price: parseFloat(document.getElementById("product-price").value),
+            stock: parseInt(document.getElementById("product-inventory").value),
+            category: document.getElementById("product-category").value,
+            image: document.getElementById("product-image").value,
+          };
+
+          try {
+            let response;
+            if (editingProduct) {
+              response = await fetch(
+                `${API_BASE}/admin/products/${editingProduct.id}`,
+                {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(formData),
+                }
+              );
+            } else {
+              response = await fetch(`${API_BASE}/admin/products`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+              });
+            }
+
+            if (response.ok) {
+              closeProductModal();
+              loadProducts();
+              alert(
+                editingProduct
+                  ? "Product updated successfully!"
+                  : "Product added successfully!"
+              );
+            } else {
+              alert("Error saving product");
+            }
+          } catch (error) {
+            console.error("Error saving product:", error);
+            alert("Error saving product");
+          }
+        });
+
+      // Load Orders
+      async function loadOrders() {
+        try {
+          const response = await fetch(`${API_BASE}/orders`);
+          const data = await response.json();
+
+          if (data.success) {
+            orders = data.data;
+            displayOrders();
+          }
+        } catch (error) {
+          console.error("Error loading orders:", error);
+          document.getElementById("orders-list").innerHTML =
+            '<div class="text-center py-8 text-red-500">Error loading orders</div>';
+        }
+      }
+
+      function displayOrders() {
+        const container = document.getElementById("orders-list");
+        if (orders.length === 0) {
+          container.innerHTML =
+            '<div class="text-center py-8 text-gray-500">No orders yet</div>';
+          return;
+        }
+
+        container.innerHTML = orders
+          .map(
+            (order) => `
+                <div class="px-6 py-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-4">
+                            <div>
+                                <p class="font-medium">Order #${order.id}</p>
+                                <p class="text-sm text-gray-500">${
+                                  order.customerName
+                                }</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-medium">$${order.total.toFixed(
+                              2
+                            )}</p>
+                            <select onchange="updateOrderStatus('${
+                              order.id
+                            }', this.value)" 
+                                class="text-sm border rounded px-2 py-1 mt-1">
+                                <option value="pending" ${
+                                  order.status === "pending" ? "selected" : ""
+                                }>Pending</option>
+                                <option value="preparing" ${
+                                  order.status === "preparing" ? "selected" : ""
+                                }>Preparing</option>
+                                <option value="ready" ${
+                                  order.status === "ready" ? "selected" : ""
+                                }>Ready</option>
+                                <option value="delivered" ${
+                                  order.status === "delivered" ? "selected" : ""
+                                }>Delivered</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        Items: ${order.items
+                          .map(
+                            (item) =>
+                              `${item.quantity}x Product ID ${item.productId}`
+                          )
+                          .join(", ")}
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      async function updateOrderStatus(orderId, newStatus) {
+        try {
+          const response = await fetch(`${API_BASE}/admin/orders/${orderId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus }),
+          });
+
+          if (response.ok) {
+            // Update local orders array
+            const orderIndex = orders.findIndex((o) => o.id === orderId);
+            if (orderIndex !== -1) {
+              orders[orderIndex].status = newStatus;
+            }
+            alert("Order status updated successfully!");
+          } else {
+            alert("Error updating order status");
+          }
+        } catch (error) {
+          console.error("Error updating order status:", error);
+          alert("Error updating order status");
+        }
+      }
+
+      function getStatusColor(status) {
+        switch (status) {
+          case "pending":
+            return "bg-yellow-100 text-yellow-800";
+          case "preparing":
+            return "bg-blue-100 text-blue-800";
+          case "ready":
+            return "bg-green-100 text-green-800";
+          case "delivered":
+            return "bg-gray-100 text-gray-800";
+          default:
+            return "bg-gray-100 text-gray-800";
+        }
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        loadAnalytics();
+      });
+    </script>
+  </body>
+</html>
