@@ -85,10 +85,17 @@ class CloudDatabase {
     }
 
     async seedSampleData() {
-        // Check if data already exists
+        // Check if we need to update to Walmart grocery products
         const productCount = await this.pool.query('SELECT COUNT(*) FROM products');
-        if (parseInt(productCount.rows[0].count) > 0) {
-            return; // Data already exists
+        const existingProduct = await this.pool.query("SELECT name FROM products WHERE name = 'Organic Bananas' LIMIT 1");
+        
+        // If we have products but not our Walmart grocery products, clear and reseed
+        if (parseInt(productCount.rows[0].count) > 0 && existingProduct.rows.length === 0) {
+            console.log('🔄 Updating to Walmart grocery products...');
+            await this.pool.query('DELETE FROM products');
+            await this.pool.query('DELETE FROM categories');
+        } else if (parseInt(productCount.rows[0].count) > 0) {
+            return; // Data already exists and is correct
         }
 
         // Sample products - Walmart style grocery store
