@@ -1,13 +1,14 @@
 {
-  "name": "store-delivery-system",
+  "name": "doordash-store-delivery",
   "version": "1.0.0",
-  "description": "Single store food delivery system with PostgreSQL cloud database",
+  "description": "Professional DoorDash-style food delivery system for single stores with admin panel, customer interface, and cloud deployment",
   "main": "cloud-server.js",
   "scripts": {
     "start": "node cloud-server.js",
     "dev": "nodemon cloud-server.js",
     "local": "node local-server.js",
-    "heroku-postbuild": "echo 'Build completed'"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "heroku-postbuild": "echo 'Production build completed successfully'"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -17,17 +18,35 @@
     "multer": "^1.4.5-lts.1",
     "pg": "^8.16.3"
   },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  },
   "engines": {
     "node": "18.x",
     "npm": "9.x"
   },
   "keywords": [
-    "food",
-    "delivery",
+    "food-delivery",
     "restaurant",
-    "ordering",
+    "doordash",
+    "ordering-system",
+    "nodejs",
+    "express",
+    "postgresql",
     "heroku",
-    "postgresql"
+    "admin-panel",
+    "ecommerce",
+    "small-business",
+    "delivery-app"
   ],
-  "license": "MIT"
+  "author": "ArSubba",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArSubba/doordash-store-delivery.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ArSubba/doordash-store-delivery/issues"
+  },
+  "homepage": "https://github.com/ArSubba/doordash-store-delivery#readme"
 }
