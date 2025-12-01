@@ -379,6 +379,25 @@
       let cart = [];
       let selectedCategory = "All";
 
+      // Get category-specific icons
+      function getCategoryIcon(category) {
+        const icons = {
+          'Fresh Produce': '🥬',
+          'Meat': '🥩', 
+          'Dairy & Eggs': '🥛',
+          'Beverages': '🥤',
+          'Pantry Staples': '🌾',
+          'Frozen Foods': '🧊',
+          'Bakery': '🍞',
+          'Personal Care': '🧴',
+          'Breakfast & Cereal': '🥣',
+          'Candy': '🍭',
+          'Deli': '🥪',
+          'Snacks': '🥨'
+        };
+        return icons[category] || '🛒';
+      }
+
       // Initialize
       document.addEventListener("DOMContentLoaded", () => {
         loadProducts();
@@ -530,7 +549,11 @@
           .map(
             (product) => `
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                    ${product.image ? `<div class="h-48 bg-gray-200 overflow-hidden"><img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover hover:scale-105 transition-transform" onerror="this.parentElement.innerHTML='<div class=\"h-48 bg-gradient-to-br from-walmart-blue to-walmart-lightblue flex items-center justify-center text-white font-medium\">🛒 ${product.category}</div>'"></div>` : `<div class="h-48 bg-gradient-to-br from-walmart-blue to-walmart-lightblue flex items-center justify-center text-white font-medium text-lg">🛒 ${product.category}</div>`}
+                    ${
+                      product.image && product.image !== 'null'
+                        ? `<div class="h-48 bg-gray-200 overflow-hidden"><img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover hover:scale-105 transition-transform" onerror="this.parentElement.innerHTML='<div class=\"h-48 bg-gradient-to-br from-walmart-blue to-walmart-lightblue flex flex-col items-center justify-center text-white\"><div class=\"text-4xl mb-2\">${getCategoryIcon(product.category)}</div><div class=\"text-sm font-medium text-center\">${product.category}</div></div>'"></div>`
+                        : `<div class="h-48 bg-gradient-to-br from-walmart-blue to-walmart-lightblue flex flex-col items-center justify-center text-white hover:from-walmart-lightblue hover:to-walmart-blue transition-colors cursor-pointer"><div class="text-5xl mb-3">${getCategoryIcon(product.category)}</div><div class="text-lg font-semibold text-center px-4">${product.category}</div><div class="text-xs opacity-80 mt-1">${product.name}</div></div>`
+                    }
                     <div class="p-4">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-lg font-semibold text-gray-900">${
