@@ -85,9 +85,32 @@ class CloudDatabase {
     }
 
     async function seedSampleData() {
-        // Clear existing data to refresh with new categories
-        await this.pool.query('DELETE FROM products');
-        await this.pool.query('DELETE FROM categories');
+        try {
+            // Check if we need to refresh categories (if old categories exist)
+            const categoryCheck = await this.pool.query('SELECT COUNT(*) FROM categories WHERE name = $1', ['Burgers']);
+            
+            if (parseInt(categoryCheck.rows[0].count) > 0) {
+                // Old categories exist, clear and reseed
+                console.log('🔄 Refreshing with new Walmart-style categories...');
+                await this.pool.query('DELETE FROM products');
+                await this.pool.query('DELETE FROM categories');
+            } else {
+                // Check if new data already exists
+                const productCount = await this.pool.query('SELECT COUNT(*) FROM products');
+                if (parseInt(productCount.rows[0].count) > 0) {
+                    return; // New data already exists
+                }
+            }
+        } catch (error) {
+            console.log('⚠️ Category check failed, proceeding with seeding:', error.message);
+            // If check fails, try to clear and continue
+            try {
+                await this.pool.query('DELETE FROM products');
+                await this.pool.query('DELETE FROM categories');
+            } catch (clearError) {
+                console.log('⚠️ Clear failed, continuing anyway:', clearError.message);
+            }
+        }
 
         // Sample products with Walmart-style categories
         const sampleProducts = [
