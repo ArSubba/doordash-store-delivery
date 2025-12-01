@@ -112,8 +112,26 @@
         </div>
 
         <!-- Category Filter -->
-        <div id="category-filters" class="flex flex-wrap gap-2">
-          <!-- Categories will be loaded dynamically -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div id="category-filters" class="flex flex-wrap gap-2">
+            <!-- Categories will be loaded dynamically -->
+          </div>
+          
+          <!-- Sort Dropdown -->
+          <div class="flex items-center gap-2">
+            <label for="sort-select" class="text-sm font-medium text-gray-700 whitespace-nowrap">Sort by:</label>
+            <select 
+              id="sort-select" 
+              onchange="handleSortChange()"
+              class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="category-price">Category & Price</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="name">Name A-Z</option>
+              <option value="name-desc">Name Z-A</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -492,6 +510,7 @@
       let categories = [];
       let cart = [];
       let selectedCategory = "All";
+      let currentSort = "category-price";
 
       // Initialize
       document.addEventListener("DOMContentLoaded", () => {
@@ -563,6 +582,11 @@
         });
       }
 
+      function handleSortChange() {
+        currentSort = document.getElementById("sort-select").value;
+        filterProducts();
+      }
+
       function filterByCategory(category) {
         selectedCategory = category;
         displayCategories();
@@ -580,14 +604,14 @@
           const matchesSearch =
             product.name.toLowerCase().includes(searchTerm) ||
             product.description.toLowerCase().includes(searchTerm);
-          return matchesCategory && matchesSearch && product.inStock;
+          return matchesCategory && matchesSearch;
         });
 
         displayFilteredProducts(filteredProducts);
       }
 
       function displayProducts() {
-        displayFilteredProducts(products.filter((p) => p.inStock));
+        displayFilteredProducts(products);
       }
 
       function displayFilteredProducts(filteredProducts) {
@@ -603,14 +627,25 @@
         container.classList.remove("hidden");
         noProducts.classList.add("hidden");
 
-        // Sort products Walmart-style: by category first, then by price within category
+        // Sort products based on selected option
         const sortedProducts = [...filteredProducts].sort((a, b) => {
-          // First sort by category
-          if (a.category !== b.category) {
-            return a.category.localeCompare(b.category);
+          switch(currentSort) {
+            case 'price-low':
+              return parseFloat(a.price) - parseFloat(b.price);
+            case 'price-high':
+              return parseFloat(b.price) - parseFloat(a.price);
+            case 'name':
+              return a.name.localeCompare(b.name);
+            case 'name-desc':
+              return b.name.localeCompare(a.name);
+            case 'category-price':
+            default:
+              // Walmart-style: by category first, then by price within category
+              if (a.category !== b.category) {
+                return a.category.localeCompare(b.category);
+              }
+              return parseFloat(a.price) - parseFloat(b.price);
           }
-          // Then by price within same category (low to high)
-          return parseFloat(a.price) - parseFloat(b.price);
         });
 
         container.innerHTML = sortedProducts

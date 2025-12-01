@@ -84,25 +84,37 @@ class CloudDatabase {
         await this.pool.query(createCategoriesTable);
     }
 
-    async seedSampleData() {
-        // Check if data already exists
-        const productCount = await this.pool.query('SELECT COUNT(*) FROM products');
-        if (parseInt(productCount.rows[0].count) > 0) {
-            return; // Data already exists
-        }
+    async function seedSampleData() {
+        // Clear existing data to refresh with new categories
+        await this.pool.query('DELETE FROM products');
+        await this.pool.query('DELETE FROM categories');
 
-        // Sample products
+        // Sample products with Walmart-style categories
         const sampleProducts = [
-            { name: 'Classic Burger', description: 'Beef patty with lettuce, tomato, onion', price: 12.99, category: 'Burgers', stock: 25, prep_time: 12 },
-            { name: 'Margherita Pizza', description: 'Fresh mozzarella, basil, tomato sauce', price: 16.99, category: 'Pizza', stock: 15, prep_time: 18 },
-            { name: 'Caesar Salad', description: 'Romaine lettuce, parmesan, croutons', price: 9.99, category: 'Salads', stock: 20, prep_time: 8 },
-            { name: 'Chicken Wings', description: '8 pieces with buffalo sauce', price: 11.99, category: 'Appetizers', stock: 30, prep_time: 15 },
-            { name: 'Fish Tacos', description: 'Grilled fish with cabbage slaw', price: 13.99, category: 'Mexican', stock: 18, prep_time: 14 },
-            { name: 'Pasta Carbonara', description: 'Creamy pasta with bacon and parmesan', price: 15.99, category: 'Italian', stock: 12, prep_time: 20 },
-            { name: 'BBQ Ribs', description: 'Slow-cooked ribs with BBQ sauce', price: 19.99, category: 'BBQ', stock: 10, prep_time: 25 },
-            { name: 'Veggie Wrap', description: 'Fresh vegetables in a tortilla wrap', price: 8.99, category: 'Healthy', stock: 22, prep_time: 10 },
-            { name: 'Chocolate Cake', description: 'Rich chocolate cake with frosting', price: 6.99, category: 'Desserts', stock: 8, prep_time: 5 },
-            { name: 'Iced Coffee', description: 'Cold brew coffee with ice', price: 4.99, category: 'Beverages', stock: 50, prep_time: 3 }
+            { name: 'Spaghetti Carbonara', description: 'Creamy pasta with bacon and parmesan', price: 15.99, category: 'Global Cuisine', stock: 12, prep_time: 20 },
+            { name: 'Chicken Pad Thai', description: 'Thai stir-fried noodles with chicken', price: 13.99, category: 'Global Cuisine', stock: 15, prep_time: 18 },
+            { name: 'Frozen Pizza', description: 'Pepperoni pizza, ready to bake', price: 8.99, category: 'Frozen', stock: 25, prep_time: 25 },
+            { name: 'Ice Cream Sandwiches', description: 'Vanilla ice cream between chocolate cookies', price: 6.99, category: 'Frozen', stock: 30, prep_time: 0 },
+            { name: 'Sourdough Bread', description: 'Fresh baked artisan sourdough loaf', price: 4.99, category: 'Bakery & Bread', stock: 18, prep_time: 0 },
+            { name: 'Chocolate Croissants', description: 'Buttery pastry with chocolate filling', price: 3.99, category: 'Bakery & Bread', stock: 12, prep_time: 0 },
+            { name: 'Organic Bananas', description: 'Fresh organic bananas, 1 lb', price: 2.99, category: 'Fresh Produce', stock: 50, prep_time: 0 },
+            { name: 'Baby Spinach', description: 'Fresh baby spinach leaves, 5 oz bag', price: 3.49, category: 'Fresh Produce', stock: 22, prep_time: 0 },
+            { name: 'Atlantic Salmon', description: 'Fresh Atlantic salmon fillet, 1 lb', price: 12.99, category: 'Meat & Seafood', stock: 8, prep_time: 0 },
+            { name: 'Ground Beef', description: '85% lean ground beef, 1 lb', price: 6.99, category: 'Meat & Seafood', stock: 15, prep_time: 0 },
+            { name: 'Potato Chips', description: 'Classic salted potato chips', price: 2.49, category: 'Snacks', stock: 35, prep_time: 0 },
+            { name: 'Mixed Nuts', description: 'Roasted and salted mixed nuts', price: 8.99, category: 'Snacks', stock: 20, prep_time: 0 },
+            { name: 'Olive Oil', description: 'Extra virgin olive oil, 500ml', price: 11.99, category: 'Pantry', stock: 18, prep_time: 0 },
+            { name: 'Jasmine Rice', description: 'Premium jasmine rice, 2 lb bag', price: 4.99, category: 'Pantry', stock: 25, prep_time: 0 },
+            { name: 'Sliced Turkey', description: 'Fresh sliced turkey breast, 1 lb', price: 9.99, category: 'Deli', stock: 12, prep_time: 0 },
+            { name: 'Swiss Cheese', description: 'Sliced Swiss cheese, 8 oz', price: 5.99, category: 'Deli', stock: 15, prep_time: 0 },
+            { name: 'Whole Milk', description: 'Fresh whole milk, 1 gallon', price: 3.99, category: 'Dairy & Eggs', stock: 30, prep_time: 0 },
+            { name: 'Free Range Eggs', description: 'Free range large eggs, dozen', price: 4.49, category: 'Dairy & Eggs', stock: 25, prep_time: 0 },
+            { name: 'Orange Juice', description: 'Fresh squeezed orange juice, 64 oz', price: 4.99, category: 'Beverages', stock: 20, prep_time: 0 },
+            { name: 'Sparkling Water', description: 'Natural sparkling water, 12 pack', price: 6.99, category: 'Beverages', stock: 40, prep_time: 0 },
+            { name: 'Granola', description: 'Honey almond granola cereal', price: 5.99, category: 'Breakfast & Cereal', stock: 22, prep_time: 0 },
+            { name: 'Instant Oatmeal', description: 'Quick cooking oatmeal, variety pack', price: 4.49, category: 'Breakfast & Cereal', stock: 28, prep_time: 0 },
+            { name: 'Dark Chocolate', description: '70% cocoa dark chocolate bar', price: 3.99, category: 'Candy', stock: 35, prep_time: 0 },
+            { name: 'Gummy Bears', description: 'Assorted fruit gummy bears', price: 2.99, category: 'Candy', stock: 45, prep_time: 0 }
         ];
 
         // Insert products
@@ -113,8 +125,8 @@ class CloudDatabase {
             );
         }
 
-        // Sample categories
-        const categories = ['Burgers', 'Pizza', 'Salads', 'Appetizers', 'Mexican', 'Italian', 'BBQ', 'Healthy', 'Desserts', 'Beverages'];
+        // Walmart-style categories
+        const categories = ['Global Cuisine', 'Frozen', 'Bakery & Bread', 'Fresh Produce', 'Meat & Seafood', 'Snacks', 'Pantry', 'Deli', 'Dairy & Eggs', 'Beverages', 'Breakfast & Cereal', 'Candy'];
         for (const category of categories) {
             await this.pool.query(
                 'INSERT INTO categories (name) VALUES ($1) ON CONFLICT (name) DO NOTHING',
