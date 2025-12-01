@@ -681,7 +681,7 @@
               stats.totalOrders;
             document.getElementById(
               "stats-revenue"
-            ).textContent = `$${stats.totalRevenue.toFixed(2)}`;
+            ).textContent = `$${parseFloat(stats.totalRevenue).toFixed(2)}`;
             document.getElementById("stats-customers").textContent =
               stats.activeCustomers;
 
@@ -712,7 +712,7 @@
                         }</p>
                     </div>
                     <div class="text-right">
-                        <p class="font-medium">$${order.total.toFixed(2)}</p>
+                        <p class="font-medium">$${parseFloat(order.total_amount || order.total).toFixed(2)}</p>
                         <span class="inline-block px-2 py-1 text-xs rounded-full ${getStatusColor(
                           order.status
                         )}">
@@ -769,7 +769,7 @@
                             <h3 class="font-semibold text-lg">${
                               product.name
                             }</h3>
-                            <span class="text-lg font-bold text-primary-600">$${product.price.toFixed(
+                            <span class="text-lg font-bold text-primary-600">$${parseFloat(product.price).toFixed(
                               2
                             )}</span>
                         </div>
@@ -983,7 +983,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="font-medium">$${order.total.toFixed(
+                            <p class="font-medium">$${parseFloat(order.total_amount || order.total).toFixed(
                               2
                             )}</p>
                             <select onchange="updateOrderStatus('${

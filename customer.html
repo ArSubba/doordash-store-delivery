@@ -85,7 +85,7 @@
       </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="products-section">
       <!-- Search and Filters -->
       <div class="mb-8 space-y-4">
         <div class="relative">
@@ -118,7 +118,7 @@
       </div>
 
       <!-- Store Info -->
-      <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-8 cursor-pointer hover:shadow-md transition-shadow" onclick="showAllProducts()">
         <div class="flex items-center justify-between">
           <div>
             <h2 class="text-2xl font-bold text-gray-900">DeliveryStore</h2>
@@ -550,6 +550,19 @@
           .join("");
       }
 
+      // Show all products when store card is clicked
+      function showAllProducts() {
+        selectedCategory = "All";
+        document.getElementById("search-input").value = "";
+        displayCategories();
+        displayProducts();
+        
+        // Scroll to products section
+        document.getElementById("products-section").scrollIntoView({
+          behavior: 'smooth'
+        });
+      }
+
       function filterByCategory(category) {
         selectedCategory = category;
         displayCategories();
@@ -590,7 +603,17 @@
         container.classList.remove("hidden");
         noProducts.classList.add("hidden");
 
-        container.innerHTML = filteredProducts
+        // Sort products Walmart-style: by category first, then by price within category
+        const sortedProducts = [...filteredProducts].sort((a, b) => {
+          // First sort by category
+          if (a.category !== b.category) {
+            return a.category.localeCompare(b.category);
+          }
+          // Then by price within same category (low to high)
+          return parseFloat(a.price) - parseFloat(b.price);
+        });
+
+        container.innerHTML = sortedProducts
           .map(
             (product) => `
                 <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
@@ -604,7 +627,7 @@
                             <h3 class="font-semibold text-lg">${
                               product.name
                             }</h3>
-                            <span class="text-lg font-bold text-primary-600">$${product.price.toFixed(
+                            <span class="text-lg font-bold text-primary-600">$${parseFloat(product.price).toFixed(
                               2
                             )}</span>
                         </div>
@@ -728,9 +751,9 @@
                          }" class="w-16 h-16 object-cover rounded-lg">
                     <div class="flex-1">
                         <h4 class="font-medium">${item.product.name}</h4>
-                        <p class="text-sm text-gray-600">$${item.product.price.toFixed(
+                        <p class="text-sm text-gray-600">$${parseFloat(item.product.price).toFixed(
                           2
-                        )} each</p>
+                        )}</p>
                     </div>
                     <div class="flex items-center space-x-2">
                         <button onclick="updateCartQuantity('${
@@ -798,7 +821,7 @@
               (item) => `
                 <div class="flex justify-between">
                     <span>${item.quantity}x ${item.product.name}</span>
-                    <span>$${(item.product.price * item.quantity).toFixed(
+                    <span>$${(parseFloat(item.product.price) * item.quantity).toFixed(
                       2
                     )}</span>
                 </div>
