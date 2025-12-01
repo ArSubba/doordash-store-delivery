@@ -132,8 +132,9 @@
 
       <!-- Store Info -->
       <div
-        class="bg-gradient-to-r from-walmart-blue to-walmart-lightblue rounded-lg shadow-lg p-6 mb-8 cursor-pointer hover:shadow-xl transition-all transform hover:-translate-y-1"
+        class="bg-gradient-to-r from-walmart-blue to-walmart-lightblue rounded-lg shadow-lg p-6 mb-8 cursor-pointer hover:shadow-xl transition-all transform hover:-translate-y-1 active:scale-95"
         onclick="showAllProducts()"
+        style="user-select: none;"
       >
         <div class="flex items-center justify-between">
           <div>
@@ -209,6 +210,17 @@
             <p class="text-blue-100 text-sm mt-1">Click to browse products</p>
           </div>
         </div>
+      </div>
+
+      <!-- Browse Products Button (Fallback) -->
+      <div class="text-center mb-6">
+        <button 
+          onclick="showAllProducts()" 
+          class="bg-walmart-yellow text-walmart-blue px-8 py-4 rounded-lg text-lg font-bold hover:bg-yellow-400 transform hover:scale-105 transition-all shadow-lg active:scale-95"
+        >
+          🛒 Browse All Products
+        </button>
+        <p class="text-gray-600 text-sm mt-2">Click here to view our grocery selection</p>
       </div>
 
       <!-- Products Grid -->
@@ -527,28 +539,29 @@
       // Load Products
       async function loadProducts() {
         try {
-          console.log('Loading products from:', `${API_BASE}/products`);
+          console.log("Loading products from:", `${API_BASE}/products`);
           const response = await fetch(`${API_BASE}/products`);
-          
+
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
           }
-          
+
           const data = await response.json();
-          console.log('Products API response:', data);
+          console.log("Products API response:", data);
 
           if (data.success && data.data) {
             products = data.data;
             console.log(`Loaded ${products.length} products`);
             displayProducts();
           } else {
-            console.error('API returned unsuccessful response:', data);
-            throw new Error('Failed to load products from API');
+            console.error("API returned unsuccessful response:", data);
+            throw new Error("Failed to load products from API");
           }
         } catch (error) {
           console.error("Error loading products:", error);
-          document.getElementById("products-grid").innerHTML =
-            `<div class="text-center py-8 text-red-500">
+          document.getElementById(
+            "products-grid"
+          ).innerHTML = `<div class="text-center py-8 text-red-500">
               <p>Error loading products: ${error.message}</p>
               <p class="text-sm mt-2">Make sure the backend server is running.</p>
               <button onclick="loadProducts()" class="mt-4 bg-walmart-blue text-white px-4 py-2 rounded-lg hover:bg-blue-700">
@@ -593,34 +606,40 @@
       }
 
       // Show all products when store card is clicked
-      function showAllProducts() {
-        console.log('Store card clicked - showing all products');
-        selectedCategory = "All";
+      async function showAllProducts() {
+        console.log("Store card clicked - showing all products");
         
+        // Show loading indicator
+        document.getElementById("products-grid").innerHTML = 
+          '<div class="col-span-full text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-walmart-blue mx-auto"></div><p class="mt-2 text-gray-600">Loading products...</p></div>';
+        
+        selectedCategory = "All";
+
         // Clear search
         const searchInput = document.getElementById("search-input");
         if (searchInput) {
           searchInput.value = "";
         }
-        
-        // Force reload products if they're not loaded
-        if (products.length === 0) {
-          console.log('No products loaded, reloading...');
-          loadProducts();
-        }
-        
-        displayCategories();
-        displayProducts();
 
-        // Scroll to products section
-        const productsSection = document.getElementById("products-section");
-        if (productsSection) {
-          productsSection.scrollIntoView({
-            behavior: "smooth",
-          });
-        } else {
-          console.error('Products section not found');
-        }
+        // Always reload products to ensure fresh data
+        console.log("Reloading products...");
+        await loadProducts();
+        
+        // Wait a moment for products to load
+        setTimeout(() => {
+          displayCategories();
+          displayProducts();
+
+          // Scroll to products section
+          const productsSection = document.getElementById("products-section");
+          if (productsSection) {
+            productsSection.scrollIntoView({
+              behavior: "smooth",
+            });
+          } else {
+            console.error("Products section not found");
+          }
+        }, 500);
       }
 
       function filterByCategory(category) {
