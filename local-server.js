@@ -4,15 +4,17 @@ const helmet = require('helmet');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const CloudDatabase = require('./cloud-database');
 require('dotenv').config();
+
+// Import local database (fallback to JSON for local testing)
+const Database = require('./backend/database');
 
 // Initialize Express
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Initialize database
-const db = new CloudDatabase();
+const db = new Database();
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -26,9 +28,9 @@ app.use(helmet({
         directives: {
             defaultSrc: ["'self'"],
             styleSrc: ["'self'", "'unsafe-inline'", "https:", "data:"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https:"],
-            imgSrc: ["'self'", "data:", "https:", "http:"],
-            connectSrc: ["'self'", "https:", "http:"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:", "http:", "http://localhost:3000"],
+            connectSrc: ["'self'", "https:", "http:", "http://localhost:3000"],
             fontSrc: ["'self'", "https:", "data:"],
             objectSrc: ["'none'"],
             mediaSrc: ["'self'"],
@@ -84,10 +86,7 @@ app.post('/api/upload-image', upload.single('image'), (req, res) => {
             });
         }
 
-        const baseUrl = process.env.NODE_ENV === 'production' 
-            ? `https://${req.get('host')}`
-            : `http://localhost:${PORT}`;
-        const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+        const imageUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
         
         res.json({
             success: true,
@@ -106,10 +105,10 @@ app.post('/api/upload-image', upload.single('image'), (req, res) => {
 });
 
 // Products Routes
-app.get('/api/products', async (req, res) => {
+app.get('/api/products', (req, res) => {
     try {
         const { category, search } = req.query;
-        let products = await db.getAllProducts();
+        let products = db.getAllProducts();
 
         if (category && category !== 'All') {
             products = products.filter(p => p.category === category);
@@ -135,9 +134,9 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-app.get('/api/products/:id', async (req, res) => {
+app.get('/api/products/:id', (req, res) => {
     try {
-        const product = await db.getProductById(req.params.id);
+        const product = db.getProductById(req.params.id);
         if (!product) {
             return res.status(404).json({
                 success: false,
@@ -158,7 +157,7 @@ app.get('/api/products/:id', async (req, res) => {
 });
 
 // Admin: Create product
-app.post('/api/admin/products', async (req, res) => {
+app.post('/api/admin/products', (req, res) => {
     try {
         const { name, description, price, category, image, stock, prep_time } = req.body;
         
@@ -179,7 +178,7 @@ app.post('/api/admin/products', async (req, res) => {
             prep_time: parseInt(prep_time) || 15
         };
 
-        const newProduct = await db.createProduct(productData);
+        const newProduct = db.createProduct(productData);
         
         res.status(201).json({
             success: true,
@@ -196,7 +195,7 @@ app.post('/api/admin/products', async (req, res) => {
 });
 
 // Admin: Update product
-app.put('/api/admin/products/:id', async (req, res) => {
+app.put('/api/admin/products/:id', (req, res) => {
     try {
         const { name, description, price, category, image, stock, prep_time } = req.body;
         
@@ -210,7 +209,7 @@ app.put('/api/admin/products/:id', async (req, res) => {
             prep_time: parseInt(prep_time)
         };
 
-        const updatedProduct = await db.updateProduct(req.params.id, productData);
+        const updatedProduct = db.updateProduct(req.params.id, productData);
         
         res.json({
             success: true,
@@ -227,9 +226,9 @@ app.put('/api/admin/products/:id', async (req, res) => {
 });
 
 // Admin: Delete product
-app.delete('/api/admin/products/:id', async (req, res) => {
+app.delete('/api/admin/products/:id', (req, res) => {
     try {
-        await db.deleteProduct(req.params.id);
+        db.deleteProduct(req.params.id);
         
         res.json({
             success: true,
@@ -245,9 +244,9 @@ app.delete('/api/admin/products/:id', async (req, res) => {
 });
 
 // Orders Routes
-app.get('/api/orders', async (req, res) => {
+app.get('/api/orders', (req, res) => {
     try {
-        const orders = await db.getAllOrders();
+        const orders = db.getAllOrders();
         res.json({
             success: true,
             data: orders
@@ -261,7 +260,7 @@ app.get('/api/orders', async (req, res) => {
     }
 });
 
-app.post('/api/orders', async (req, res) => {
+app.post('/api/orders', (req, res) => {
     try {
         const { customerName, customerEmail, customerPhone, address, items, total, deliveryTime, specialInstructions } = req.body;
         
@@ -273,16 +272,16 @@ app.post('/api/orders', async (req, res) => {
         }
 
         const orderData = {
-            customer_name: customerName,
-            customer_email: customerEmail || '',
-            customer_phone: customerPhone || '',
-            delivery_address: address || '',
+            customerName,
+            customerEmail: customerEmail || '',
+            customerPhone: customerPhone || '',
+            deliveryAddress: address || '',
             items,
-            total: parseFloat(total),
-            special_instructions: specialInstructions || ''
+            totalAmount: parseFloat(total),
+            specialInstructions: specialInstructions || ''
         };
 
-        const newOrder = await db.createOrder(orderData);
+        const newOrder = db.createOrder(orderData);
 
         res.status(201).json({
             success: true,
@@ -299,7 +298,7 @@ app.post('/api/orders', async (req, res) => {
 });
 
 // Admin: Update order status
-app.put('/api/admin/orders/:id', async (req, res) => {
+app.put('/api/admin/orders/:id', (req, res) => {
     try {
         const { status } = req.body;
         if (!['pending', 'preparing', 'ready', 'delivered', 'cancelled'].includes(status)) {
@@ -309,7 +308,7 @@ app.put('/api/admin/orders/:id', async (req, res) => {
             });
         }
 
-        const updatedOrder = await db.updateOrderStatus(req.params.id, status);
+        const updatedOrder = db.updateOrderStatus(req.params.id, status);
         
         res.json({
             success: true,
@@ -326,9 +325,9 @@ app.put('/api/admin/orders/:id', async (req, res) => {
 });
 
 // Categories Route
-app.get('/api/categories', async (req, res) => {
+app.get('/api/categories', (req, res) => {
     try {
-        const categories = await db.getCategories();
+        const categories = db.getCategories();
         res.json({
             success: true,
             data: categories
@@ -343,15 +342,15 @@ app.get('/api/categories', async (req, res) => {
 });
 
 // Analytics Routes (Admin)
-app.get('/api/admin/analytics', async (req, res) => {
+app.get('/api/admin/analytics', (req, res) => {
     try {
-        const products = await db.getAllProducts();
-        const orders = await db.getAllOrders();
+        const products = db.getAllProducts();
+        const orders = db.getAllOrders();
         
         const totalProducts = products.length;
         const totalOrders = orders.length;
-        const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.total_amount), 0);
-        const activeCustomers = new Set(orders.map(order => order.customer_email)).size;
+        const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.totalAmount), 0);
+        const activeCustomers = new Set(orders.map(order => order.customerEmail)).size;
         
         const recentOrders = orders.slice(0, 5);
         
@@ -417,22 +416,11 @@ app.use('*', (req, res) => {
     });
 });
 
-// Graceful shutdown
-process.on('SIGTERM', async () => {
-    console.log('SIGTERM received, shutting down gracefully');
-    await db.close();
-    process.exit(0);
-});
-
 app.listen(PORT, () => {
-    console.log(`🚀 Store Delivery System running on port ${PORT}`);
+    console.log(`🚀 Store Delivery System running locally on port ${PORT}`);
     console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-    if (process.env.NODE_ENV === 'production') {
-        console.log(`🏪 Your Live Store: https://${process.env.HEROKU_APP_NAME}.herokuapp.com`);
-        console.log(`👨‍💼 Admin Panel: https://${process.env.HEROKU_APP_NAME}.herokuapp.com/admin`);
-        console.log(`🛒 Customer Store: https://${process.env.HEROKU_APP_NAME}.herokuapp.com/customer`);
-    } else {
-        console.log(`🏪 Customer Store: http://localhost:${PORT}/customer`);
-        console.log(`👨‍💼 Admin Panel: http://localhost:${PORT}/admin`);
-    }
+    console.log(`📱 Customer Store: http://localhost:${PORT}/customer`);
+    console.log(`👨‍💼 Admin Panel: http://localhost:${PORT}/admin`);
+    console.log(`🏠 Landing Page: http://localhost:${PORT}`);
+    console.log(`\n✨ Ready to take orders! Press Ctrl+C to stop the server.`);
 });
