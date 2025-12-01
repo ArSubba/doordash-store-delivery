@@ -297,17 +297,21 @@ app.put('/api/admin/products/:id', requireAuth, async (req, res) => {
     try {
         const { name, description, price, category, image, stock, prep_time } = req.body;
         
+        console.log('Updating product:', req.params.id, 'with data:', req.body);
+        
         const productData = {
             name,
             description,
             price: parseFloat(price),
             category,
             image,
-            stock: parseInt(stock),
-            prep_time: parseInt(prep_time)
+            stock: parseInt(stock) || 0,
+            prep_time: parseInt(prep_time) || 15 // Default prep time if not provided
         };
 
         const updatedProduct = await db.updateProduct(req.params.id, productData);
+        
+        console.log('Product updated successfully:', updatedProduct);
         
         res.json({
             success: true,
@@ -315,6 +319,7 @@ app.put('/api/admin/products/:id', requireAuth, async (req, res) => {
             message: 'Product updated successfully'
         });
     } catch (error) {
+        console.error('Error updating product:', error);
         res.status(500).json({
             success: false,
             message: 'Error updating product',

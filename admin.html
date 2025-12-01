@@ -843,6 +843,7 @@
 
       // Product Modal Management
       function openProductModal(product = null) {
+        console.log('Opening product modal with product:', product);
         editingProduct = product;
         const modal = document.getElementById("product-modal");
         const title = document.getElementById("modal-title");
@@ -888,9 +889,15 @@
       }
 
       function editProduct(productId) {
-        const product = products.find((p) => p.id === productId);
+        console.log('Edit button clicked, productId:', productId);
+        console.log('Available products:', products);
+        // Handle both string and number IDs
+        const product = products.find((p) => p.id == productId || p.id === parseInt(productId));
+        console.log('Found product:', product);
         if (product) {
           openProductModal(product);
+        } else {
+          console.error('Product not found with ID:', productId);
         }
       }
 
