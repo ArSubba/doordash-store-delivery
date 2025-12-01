@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const session = require('express-session');
 const CloudDatabase = require('./cloud-database');
 require('dotenv').config();
 
@@ -46,6 +47,29 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// Session configuration
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+}));
+
+// Admin credentials (in production, use environment variables)
+const ADMIN_CREDENTIALS = {
+    username: process.env.ADMIN_USERNAME || 'admin',
+    password: process.env.ADMIN_PASSWORD || 'admin123'
+};
+
+// Authentication middleware
+function requireAuth(req, res, next) {
+    if (req.session.isAuthenticated) {
+        next();
+    } else {
+        res.status(401).json({ success: false, message: 'Authentication required' });
+    }
+}
+
 // Serve static files
 app.use(express.static(__dirname));
 app.use('/uploads', express.static(uploadsDir));
@@ -74,6 +98,41 @@ const upload = multer({
 });
 
 // API Routes
+
+// Authentication Routes
+app.post('/api/auth/login', (req, res) => {
+    const { username, password } = req.body;
+    
+    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+        req.session.isAuthenticated = true;
+        req.session.username = username;
+        res.json({
+            success: true,
+            message: 'Login successful'
+        });
+    } else {
+        res.status(401).json({
+            success: false,
+            message: 'Invalid credentials'
+        });
+    }
+});
+
+app.post('/api/auth/logout', (req, res) => {
+    req.session.destroy();
+    res.json({
+        success: true,
+        message: 'Logged out successfully'
+    });
+});
+
+app.get('/api/auth/status', (req, res) => {
+    res.json({
+        success: true,
+        isAuthenticated: !!req.session.isAuthenticated,
+        username: req.session.username || null
+    });
+});
 
 // Image upload endpoint
 app.post('/api/upload-image', upload.single('image'), (req, res) => {
@@ -158,8 +217,21 @@ app.get('/api/products/:id', async (req, res) => {
     }
 });
 
-// Admin: Create product
-app.post('/api/admin/products', async (req, res) => {
+// Page Routes
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/customer', (req, res) => {
+    res.sendFile(path.join(__dirname, 'customer.html'));
+});
+
+// Admin: Create product (Protected)
+app.post('/api/admin/products', requireAuth, async (req, res) => {
     try {
         const { name, description, price, category, image, stock, prep_time } = req.body;
         
@@ -196,8 +268,8 @@ app.post('/api/admin/products', async (req, res) => {
     }
 });
 
-// Admin: Update product
-app.put('/api/admin/products/:id', async (req, res) => {
+// Admin: Update product (Protected)
+app.put('/api/admin/products/:id', requireAuth, async (req, res) => {
     try {
         const { name, description, price, category, image, stock, prep_time } = req.body;
         
@@ -227,8 +299,8 @@ app.put('/api/admin/products/:id', async (req, res) => {
     }
 });
 
-// Admin: Delete product
-app.delete('/api/admin/products/:id', async (req, res) => {
+// Admin: Delete product (Protected)
+app.delete('/api/admin/products/:id', requireAuth, async (req, res) => {
     try {
         await db.deleteProduct(req.params.id);
         
