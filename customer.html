@@ -527,17 +527,34 @@
       // Load Products
       async function loadProducts() {
         try {
+          console.log('Loading products from:', `${API_BASE}/products`);
           const response = await fetch(`${API_BASE}/products`);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          
           const data = await response.json();
+          console.log('Products API response:', data);
 
-          if (data.success) {
+          if (data.success && data.data) {
             products = data.data;
+            console.log(`Loaded ${products.length} products`);
             displayProducts();
+          } else {
+            console.error('API returned unsuccessful response:', data);
+            throw new Error('Failed to load products from API');
           }
         } catch (error) {
           console.error("Error loading products:", error);
           document.getElementById("products-grid").innerHTML =
-            '<div class="text-center py-8 text-red-500">Error loading products. Make sure the backend server is running.</div>';
+            `<div class="text-center py-8 text-red-500">
+              <p>Error loading products: ${error.message}</p>
+              <p class="text-sm mt-2">Make sure the backend server is running.</p>
+              <button onclick="loadProducts()" class="mt-4 bg-walmart-blue text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                Retry
+              </button>
+            </div>`;
         }
       }
 
@@ -577,15 +594,33 @@
 
       // Show all products when store card is clicked
       function showAllProducts() {
+        console.log('Store card clicked - showing all products');
         selectedCategory = "All";
-        document.getElementById("search-input").value = "";
+        
+        // Clear search
+        const searchInput = document.getElementById("search-input");
+        if (searchInput) {
+          searchInput.value = "";
+        }
+        
+        // Force reload products if they're not loaded
+        if (products.length === 0) {
+          console.log('No products loaded, reloading...');
+          loadProducts();
+        }
+        
         displayCategories();
         displayProducts();
 
         // Scroll to products section
-        document.getElementById("products-section").scrollIntoView({
-          behavior: "smooth",
-        });
+        const productsSection = document.getElementById("products-section");
+        if (productsSection) {
+          productsSection.scrollIntoView({
+            behavior: "smooth",
+          });
+        } else {
+          console.error('Products section not found');
+        }
       }
 
       function filterByCategory(category) {
