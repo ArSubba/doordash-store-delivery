@@ -2,9 +2,30 @@ const { Pool } = require('pg');
 
 class CloudDatabase {
     constructor() {
-        this.pool = new Pool({
+        // Use Heroku PostgreSQL connection or local fallback
+        const connectionConfig = {
             connectionString: process.env.DATABASE_URL,
             ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+        };
+
+        // If DATABASE_URL is not available, try individual env vars
+        if (!process.env.DATABASE_URL && process.env.NODE_ENV === 'production') {
+            connectionConfig = {
+                host: process.env.DB_HOST || 'localhost',
+                port: process.env.DB_PORT || 5432,
+                database: process.env.DB_NAME || 'postgres',
+                user: process.env.DB_USER || 'postgres',
+                password: process.env.DB_PASSWORD || '',
+                ssl: { rejectUnauthorized: false }
+            };
+        }
+
+        this.pool = new Pool(connectionConfig);
+        
+        console.log('Database connection config:', {
+            hasConnectionString: !!process.env.DATABASE_URL,
+            nodeEnv: process.env.NODE_ENV,
+            ssl: connectionConfig.ssl ? 'enabled' : 'disabled'
         });
         
         this.initializeDatabase();
@@ -13,20 +34,10 @@ class CloudDatabase {
     async initializeDatabase() {
         try {
             await this.createTables();
-            console.log('✅ Database tables created');
-            
-            // Try seeding, but don't fail if it doesn't work
-            try {
-                await this.seedSampleData();
-                console.log('✅ Sample data seeded');
-            } catch (seedError) {
-                console.log('⚠️ Sample data seeding skipped:', seedError.message);
-            }
-            
-            console.log('✅ PostgreSQL database initialized');
+            await this.seedSampleData();
+            console.log('✅ PostgreSQL database initialized successfully');
         } catch (error) {
             console.error('❌ Database initialization error:', error);
-            // Don't throw - let app continue without database
         }
     }
 
@@ -73,7 +84,7 @@ class CloudDatabase {
         await this.pool.query(createCategoriesTable);
     }
 
-    async function seedSampleData() {
+    async seedSampleData() {
         // Check if data already exists
         const productCount = await this.pool.query('SELECT COUNT(*) FROM products');
         if (parseInt(productCount.rows[0].count) > 0) {

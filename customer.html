@@ -85,7 +85,10 @@
       </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="products-section">
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      id="products-section"
+    >
       <!-- Search and Filters -->
       <div class="mb-8 space-y-4">
         <div class="relative">
@@ -112,31 +115,16 @@
         </div>
 
         <!-- Category Filter -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div id="category-filters" class="flex flex-wrap gap-2">
-            <!-- Categories will be loaded dynamically -->
-          </div>
-          
-          <!-- Sort Dropdown -->
-          <div class="flex items-center gap-2">
-            <label for="sort-select" class="text-sm font-medium text-gray-700 whitespace-nowrap">Sort by:</label>
-            <select 
-              id="sort-select" 
-              onchange="handleSortChange()"
-              class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            >
-              <option value="category-price">Category & Price</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="name">Name A-Z</option>
-              <option value="name-desc">Name Z-A</option>
-            </select>
-          </div>
+        <div id="category-filters" class="flex flex-wrap gap-2">
+          <!-- Categories will be loaded dynamically -->
         </div>
       </div>
 
       <!-- Store Info -->
-      <div class="bg-white rounded-lg shadow-sm p-6 mb-8 cursor-pointer hover:shadow-md transition-shadow" onclick="showAllProducts()">
+      <div
+        class="bg-white rounded-lg shadow-sm p-6 mb-8 cursor-pointer hover:shadow-md transition-shadow"
+        onclick="showAllProducts()"
+      >
         <div class="flex items-center justify-between">
           <div>
             <h2 class="text-2xl font-bold text-gray-900">DeliveryStore</h2>
@@ -510,7 +498,6 @@
       let categories = [];
       let cart = [];
       let selectedCategory = "All";
-      let currentSort = "category-price";
 
       // Initialize
       document.addEventListener("DOMContentLoaded", () => {
@@ -575,16 +562,11 @@
         document.getElementById("search-input").value = "";
         displayCategories();
         displayProducts();
-        
+
         // Scroll to products section
         document.getElementById("products-section").scrollIntoView({
-          behavior: 'smooth'
+          behavior: "smooth",
         });
-      }
-
-      function handleSortChange() {
-        currentSort = document.getElementById("sort-select").value;
-        filterProducts();
       }
 
       function filterByCategory(category) {
@@ -604,14 +586,14 @@
           const matchesSearch =
             product.name.toLowerCase().includes(searchTerm) ||
             product.description.toLowerCase().includes(searchTerm);
-          return matchesCategory && matchesSearch;
+          return matchesCategory && matchesSearch && product.inStock;
         });
 
         displayFilteredProducts(filteredProducts);
       }
 
       function displayProducts() {
-        displayFilteredProducts(products);
+        displayFilteredProducts(products.filter((p) => p.inStock));
       }
 
       function displayFilteredProducts(filteredProducts) {
@@ -627,25 +609,14 @@
         container.classList.remove("hidden");
         noProducts.classList.add("hidden");
 
-        // Sort products based on selected option
+        // Sort products Walmart-style: by category first, then by price within category
         const sortedProducts = [...filteredProducts].sort((a, b) => {
-          switch(currentSort) {
-            case 'price-low':
-              return parseFloat(a.price) - parseFloat(b.price);
-            case 'price-high':
-              return parseFloat(b.price) - parseFloat(a.price);
-            case 'name':
-              return a.name.localeCompare(b.name);
-            case 'name-desc':
-              return b.name.localeCompare(a.name);
-            case 'category-price':
-            default:
-              // Walmart-style: by category first, then by price within category
-              if (a.category !== b.category) {
-                return a.category.localeCompare(b.category);
-              }
-              return parseFloat(a.price) - parseFloat(b.price);
+          // First sort by category
+          if (a.category !== b.category) {
+            return a.category.localeCompare(b.category);
           }
+          // Then by price within same category (low to high)
+          return parseFloat(a.price) - parseFloat(b.price);
         });
 
         container.innerHTML = sortedProducts
@@ -662,9 +633,9 @@
                             <h3 class="font-semibold text-lg">${
                               product.name
                             }</h3>
-                            <span class="text-lg font-bold text-primary-600">$${parseFloat(product.price).toFixed(
-                              2
-                            )}</span>
+                            <span class="text-lg font-bold text-primary-600">$${parseFloat(
+                              product.price
+                            ).toFixed(2)}</span>
                         </div>
                         
                         <p class="text-gray-600 text-sm mb-3 line-clamp-2">${
@@ -786,9 +757,9 @@
                          }" class="w-16 h-16 object-cover rounded-lg">
                     <div class="flex-1">
                         <h4 class="font-medium">${item.product.name}</h4>
-                        <p class="text-sm text-gray-600">$${parseFloat(item.product.price).toFixed(
-                          2
-                        )}</p>
+                        <p class="text-sm text-gray-600">$${parseFloat(
+                          item.product.price
+                        ).toFixed(2)}</p>
                     </div>
                     <div class="flex items-center space-x-2">
                         <button onclick="updateCartQuantity('${
@@ -856,9 +827,9 @@
               (item) => `
                 <div class="flex justify-between">
                     <span>${item.quantity}x ${item.product.name}</span>
-                    <span>$${(parseFloat(item.product.price) * item.quantity).toFixed(
-                      2
-                    )}</span>
+                    <span>$${(
+                      parseFloat(item.product.price) * item.quantity
+                    ).toFixed(2)}</span>
                 </div>
             `
             )

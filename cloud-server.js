@@ -23,7 +23,13 @@ try {
     db = {
         getAllProducts: async () => ({ success: false, message: 'Database unavailable' }),
         createProduct: async () => ({ success: false, message: 'Database unavailable' }),
-        // Add other methods as needed
+        updateProduct: async () => ({ success: false, message: 'Database unavailable' }),
+        deleteProduct: async () => ({ success: false, message: 'Database unavailable' }),
+        getAllOrders: async () => ({ success: false, message: 'Database unavailable' }),
+        createOrder: async () => ({ success: false, message: 'Database unavailable' }),
+        updateOrderStatus: async () => ({ success: false, message: 'Database unavailable' }),
+        getCategories: async () => ({ success: false, message: 'Database unavailable' }),
+        close: async () => {}
     };
 }
 
