@@ -73,7 +73,9 @@ app.use(session({
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
 }));
 
-// Admin credentials (in production, use environment variables)
+// Admin credentials (change via environment variables)
+// To change: Set ADMIN_USERNAME and ADMIN_PASSWORD in your .env file or Heroku config
+// Example: ADMIN_USERNAME=myuser ADMIN_PASSWORD=mypassword123
 const ADMIN_CREDENTIALS = {
     username: process.env.ADMIN_USERNAME || 'admin',
     password: process.env.ADMIN_PASSWORD || 'admin123'
