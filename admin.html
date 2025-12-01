@@ -680,7 +680,18 @@
       // Load Analytics Data
       async function loadAnalytics() {
         try {
-          const response = await fetch(`${API_BASE}/admin/analytics`);
+          const response = await fetch(`${API_BASE}/admin/analytics`, {
+            credentials: 'include'
+          });
+          
+          if (!response.ok) {
+            if (response.status === 401) {
+              window.location.reload();
+              return;
+            }
+            throw new Error('Failed to load analytics');
+          }
+          
           const data = await response.json();
 
           if (data.success) {
@@ -891,18 +902,27 @@
             `${API_BASE}/admin/products/${productId}`,
             {
               method: "DELETE",
+              credentials: 'include',
+              headers: {
+                'Content-Type': 'application/json'
+              }
             }
           );
 
+          const result = await response.json();
+          
           if (response.ok) {
             loadProducts(); // Reload products
             alert("Product deleted successfully!");
+          } else if (response.status === 401) {
+            alert("Session expired. Please log in again.");
+            showLoginModal();
           } else {
-            alert("Error deleting product");
+            alert("Error deleting product: " + (result.message || 'Unknown error'));
           }
         } catch (error) {
           console.error("Error deleting product:", error);
-          alert("Error deleting product");
+          alert("Error deleting product: " + error.message);
         }
       }
 
@@ -928,6 +948,7 @@
                 `${API_BASE}/admin/products/${editingProduct.id}`,
                 {
                   method: "PUT",
+                  credentials: 'include',
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(formData),
                 }
@@ -935,11 +956,14 @@
             } else {
               response = await fetch(`${API_BASE}/admin/products`, {
                 method: "POST",
+                credentials: 'include',
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
               });
             }
 
+            const result = await response.json();
+            
             if (response.ok) {
               closeProductModal();
               loadProducts();
@@ -948,8 +972,11 @@
                   ? "Product updated successfully!"
                   : "Product added successfully!"
               );
+            } else if (response.status === 401) {
+              alert("Session expired. Please log in again.");
+              showLoginModal();
             } else {
-              alert("Error saving product");
+              alert("Error saving product: " + (result.message || 'Unknown error'));
             }
           } catch (error) {
             console.error("Error saving product:", error);
@@ -960,7 +987,18 @@
       // Load Orders
       async function loadOrders() {
         try {
-          const response = await fetch(`${API_BASE}/orders`);
+          const response = await fetch(`${API_BASE}/orders`, {
+            credentials: 'include'
+          });
+          
+          if (!response.ok) {
+            if (response.status === 401) {
+              showLoginModal();
+              return;
+            }
+            throw new Error('Failed to load orders');
+          }
+          
           const data = await response.json();
 
           if (data.success) {
@@ -1036,6 +1074,7 @@
         try {
           const response = await fetch(`${API_BASE}/admin/orders/${orderId}`, {
             method: "PUT",
+            credentials: 'include',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status: newStatus }),
           });
@@ -1074,7 +1113,14 @@
       // Authentication functions
       async function checkAuth() {
         try {
-          const response = await fetch(`${API_BASE}/auth/status`);
+          const response = await fetch(`${API_BASE}/auth/status`, {
+            credentials: 'include'
+          });
+          
+          if (!response.ok) {
+            return false;
+          }
+          
           const data = await response.json();
           return data.isAuthenticated;
         } catch (error) {
@@ -1086,22 +1132,50 @@
         try {
           const response = await fetch(`${API_BASE}/auth/login`, {
             method: "POST",
+            credentials: 'include',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),
           });
+          
+          if (!response.ok) {
+            console.error('Login failed:', response.status);
+            return false;
+          }
+          
           const data = await response.json();
           return data.success;
         } catch (error) {
+          console.error('Login error:', error);
           return false;
         }
       }
 
       async function logout() {
         try {
-          await fetch(`${API_BASE}/auth/logout`, { method: "POST" });
-          showLoginModal();
+          const response = await fetch(`${API_BASE}/auth/logout`, { 
+            method: "POST",
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            // Clear any local storage
+            localStorage.removeItem('adminAuth');
+            // Redirect to refresh the page state
+            window.location.reload();
+          } else {
+            console.error('Logout failed:', await response.text());
+            // Force logout anyway
+            localStorage.removeItem('adminAuth');
+            showLoginModal();
+          }
         } catch (error) {
           console.error("Logout error:", error);
+          // Force logout anyway
+          localStorage.removeItem('adminAuth');
+          showLoginModal();
         }
       }
 
