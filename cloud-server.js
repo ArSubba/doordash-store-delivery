@@ -248,6 +248,10 @@ app.get('/customer', (req, res) => {
     res.sendFile(path.join(__dirname, 'customer.html'));
 });
 
+app.get('/store', (req, res) => {
+    res.sendFile(path.join(__dirname, 'store.html'));
+});
+
 // Admin: Create product (Protected)
 app.post('/api/admin/products', requireAuth, async (req, res) => {
     try {

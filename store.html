@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Walmart Grocery Store - Browse Products</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#eff6ff",
+                100: "#dbeafe",
+                200: "#bfdbfe",
+                300: "#93c5fd",
+                400: "#60a5fa",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                800: "#1e40af",
+                900: "#1e3a8a",
+              },
+              walmart: {
+                blue: "#0071ce",
+                yellow: "#ffc220",
+                lightblue: "#004c91",
+              },
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-walmart-blue shadow-sm border-b sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <button
+              onclick="window.location.href='/customer'"
+              class="flex items-center text-white hover:text-walmart-yellow mr-6"
+            >
+              <svg
+                class="h-5 w-5 mr-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                ></path>
+              </svg>
+              Back to Store
+            </button>
+            <div class="flex items-center">
+              <h1 class="text-2xl font-bold text-white">Walmart</h1>
+              <span class="text-walmart-yellow text-lg ml-2 font-medium">Grocery</span>
+            </div>
+          </div>
+
+          <!-- Cart Button -->
+          <button
+            onclick="toggleCart()"
+            class="relative bg-walmart-yellow text-walmart-blue px-4 py-2 rounded-lg hover:bg-yellow-300 flex items-center gap-2 font-medium"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              ></path>
+            </svg>
+            Cart
+            <span
+              id="cart-count"
+              class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center hidden"
+              >0</span
+            >
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Search and Filters -->
+      <div class="mb-8 space-y-4">
+        <div class="relative">
+          <svg
+            class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            ></path>
+          </svg>
+          <input
+            type="text"
+            id="search-input"
+            onkeyup="filterProducts()"
+            placeholder="Search for groceries..."
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-walmart-blue focus:border-transparent"
+          />
+        </div>
+
+        <!-- Category Filter -->
+        <div id="category-filters" class="flex flex-wrap gap-2">
+          <!-- Categories will be loaded dynamically -->
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="col-span-full text-center py-8">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-walmart-blue mx-auto"></div>
+          <p class="mt-2 text-gray-600">Loading products...</p>
+        </div>
+      </div>
+
+      <div id="no-products" class="text-center py-12 hidden">
+        <p class="text-gray-500 text-lg">No products found matching your criteria.</p>
+        <button onclick="clearFilters()" class="mt-4 text-walmart-blue hover:underline">
+          Clear filters and show all products
+        </button>
+      </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-white p-4 border-b flex justify-between items-center">
+          <h3 class="text-lg font-semibold">Your Cart</h3>
+          <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-full">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-4">
+          <div id="cart-items" class="space-y-4 mb-6">
+            <p class="text-center text-gray-500 py-8">Your cart is empty</p>
+          </div>
+
+          <div id="cart-total" class="border-t pt-4 hidden">
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-lg font-semibold">Total:</span>
+              <span id="total-price" class="text-lg font-bold text-walmart-blue">$0.00</span>
+            </div>
+
+            <button onclick="proceedToCheckout()" class="w-full bg-walmart-blue text-white py-3 rounded-lg hover:bg-walmart-lightblue flex items-center justify-center gap-2">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+              </svg>
+              Proceed to Checkout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-white p-4 border-b flex justify-between items-center">
+          <h3 class="text-lg font-semibold">Checkout</h3>
+          <button onclick="closeCheckout()" class="p-2 hover:bg-gray-100 rounded-full">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <form id="checkout-form" class="p-4 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+            <input type="text" id="customer-name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-walmart-blue focus:border-transparent" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input type="email" id="customer-email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-walmart-blue focus:border-transparent" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+            <input type="tel" id="customer-phone" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-walmart-blue focus:border-transparent" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Delivery Address</label>
+            <textarea id="delivery-address" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-walmart-blue focus:border-transparent" placeholder="Enter your full address"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Special Instructions</label>
+            <textarea id="special-instructions" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-walmart-blue focus:border-transparent" placeholder="Any special delivery instructions"></textarea>
+          </div>
+
+          <div class="border-t pt-4">
+            <div id="checkout-items" class="space-y-2 mb-4"></div>
+            <div class="flex justify-between items-center text-lg font-bold">
+              <span>Total:</span>
+              <span id="checkout-total" class="text-walmart-blue">$0.00</span>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-walmart-blue text-white py-3 rounded-lg hover:bg-walmart-lightblue font-medium">
+            Place Order
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-lg w-full max-w-md p-6 text-center">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-green-600 mb-2">Order Placed Successfully!</h3>
+        <p class="text-gray-600 mb-4">Your order is being prepared. You'll receive updates shortly.</p>
+        <p class="text-sm text-gray-500 mb-4">Order ID: <span id="order-id" class="font-mono"></span></p>
+        <button onclick="closeSuccess()" class="bg-walmart-blue text-white px-6 py-2 rounded-lg hover:bg-walmart-lightblue">
+          Continue Shopping
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = `${window.location.origin}/api`;
+      let products = [];
+      let categories = [];
+      let cart = [];
+      let selectedCategory = "All";
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", () => {
+        loadProducts();
+        loadCategories();
+        loadCartFromStorage();
+        handleURLParameters();
+      });
+
+      // Handle URL parameters for search and category
+      function handleURLParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchTerm = urlParams.get('search');
+        const category = urlParams.get('category');
+        
+        if (searchTerm) {
+          document.getElementById('search-input').value = searchTerm;
+        }
+        
+        if (category) {
+          selectedCategory = category;
+        }
+      }
+
+      // Load Products
+      async function loadProducts() {
+        try {
+          console.log('Loading products from:', `${API_BASE}/products`);
+          const response = await fetch(`${API_BASE}/products`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          
+          const data = await response.json();
+          console.log('Products API response:', data);
+
+          if (data.success && data.data && Array.isArray(data.data)) {
+            products = data.data;
+            console.log(`✅ Loaded ${products.length} products`);
+            
+            if (products.length > 0) {
+              console.log('First product:', products[0]);
+              displayProducts();
+              return true;
+            } else {
+              throw new Error('No products available in database');
+            }
+          } else {
+            console.error('API returned unsuccessful response:', data);
+            throw new Error(data.message || 'Failed to load products from API');
+          }
+        } catch (error) {
+          console.error("❌ Error loading products:", error);
+          document.getElementById("products-grid").innerHTML =
+            `<div class="col-span-full text-center py-8 text-red-500">
+              <div class="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+                <h3 class="font-semibold mb-2">Unable to load products</h3>
+                <p class="text-sm mb-2">${error.message}</p>
+                <p class="text-xs text-gray-600 mb-4">Please check your internet connection and try again.</p>
+                <button onclick="loadProducts()" class="bg-walmart-blue text-white px-4 py-2 rounded-lg hover:bg-walmart-lightblue transition-colors">
+                  🔄 Retry Loading
+                </button>
+              </div>
+            </div>`;
+          return false;
+        }
+      }
+
+      // Load Categories
+      async function loadCategories() {
+        try {
+          const response = await fetch(`${API_BASE}/categories`);
+          const data = await response.json();
+
+          if (data.success) {
+            categories = ["All", ...data.data];
+            displayCategories();
+          }
+        } catch (error) {
+          console.error("Error loading categories:", error);
+        }
+      }
+
+      function displayCategories() {
+        const container = document.getElementById("category-filters");
+        container.innerHTML = categories
+          .map(
+            (category) => `
+                <button onclick="filterByCategory('${category}')" 
+                    data-category="${category}"
+                    class="category-btn px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                      category === selectedCategory
+                        ? "bg-walmart-blue text-white shadow-lg"
+                        : "bg-white text-gray-600 hover:bg-gray-50 border-2 border-gray-200 hover:border-walmart-blue"
+                    }">
+                    ${category}
+                </button>
+            `
+          )
+          .join("");
+      }
+
+      function filterByCategory(category) {
+        selectedCategory = category;
+        displayCategories();
+        filterProducts();
+      }
+
+      function filterProducts() {
+        const searchTerm = document
+          .getElementById("search-input")
+          .value.toLowerCase();
+
+        let filteredProducts = products.filter((product) => {
+          const matchesCategory =
+            selectedCategory === "All" || product.category === selectedCategory;
+          const matchesSearch =
+            product.name.toLowerCase().includes(searchTerm) ||
+            product.description.toLowerCase().includes(searchTerm);
+
+          return matchesCategory && matchesSearch;
+        });
+
+        displayFilteredProducts(filteredProducts);
+      }
+
+      function displayProducts() {
+        displayFilteredProducts(products);
+      }
+
+      function displayFilteredProducts(productsToShow) {
+        const container = document.getElementById("products-grid");
+        const noProductsMessage = document.getElementById("no-products");
+
+        if (productsToShow.length === 0) {
+          container.innerHTML = "";
+          noProductsMessage.classList.remove("hidden");
+          return;
+        }
+
+        noProductsMessage.classList.add("hidden");
+        container.innerHTML = productsToShow
+          .map(
+            (product) => `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg font-semibold text-gray-900">${product.name}</h3>
+                            <span class="bg-walmart-blue text-white px-2 py-1 rounded text-xs">${product.category}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">${product.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-walmart-blue">$${parseFloat(product.price).toFixed(2)}</span>
+                            <button 
+                                onclick="addToCart(${product.id}, '${product.name}', ${product.price})"
+                                class="bg-walmart-yellow text-walmart-blue px-4 py-2 rounded-lg hover:bg-yellow-400 transition-colors font-medium flex items-center gap-1"
+                            >
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                Add to Cart
+                            </button>
+                        </div>
+                        ${product.stock <= 5 ? `<p class="text-red-500 text-xs mt-1">Only ${product.stock} left in stock!</p>` : ''}
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      function clearFilters() {
+        selectedCategory = "All";
+        document.getElementById("search-input").value = "";
+        displayCategories();
+        displayProducts();
+      }
+
+      // Cart functionality
+      function loadCartFromStorage() {
+        const savedCart = localStorage.getItem('walmartCart');
+        if (savedCart) {
+          cart = JSON.parse(savedCart);
+          updateCartDisplay();
+        }
+      }
+
+      function saveCartToStorage() {
+        localStorage.setItem('walmartCart', JSON.stringify(cart));
+      }
+
+      function addToCart(id, name, price) {
+        const existingItem = cart.find((item) => item.id === id);
+
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          cart.push({ id, name, price: parseFloat(price), quantity: 1 });
+        }
+
+        updateCartDisplay();
+        saveCartToStorage();
+        
+        // Show brief feedback
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '✓ Added!';
+        button.classList.add('bg-green-500', 'text-white');
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.classList.remove('bg-green-500', 'text-white');
+        }, 1000);
+      }
+
+      function removeFromCart(id) {
+        cart = cart.filter((item) => item.id !== id);
+        updateCartDisplay();
+        saveCartToStorage();
+      }
+
+      function updateQuantity(id, change) {
+        const item = cart.find((item) => item.id === id);
+        if (item) {
+          item.quantity += change;
+          if (item.quantity <= 0) {
+            removeFromCart(id);
+          } else {
+            updateCartDisplay();
+            saveCartToStorage();
+          }
+        }
+      }
+
+      function updateCartDisplay() {
+        const cartItems = document.getElementById("cart-items");
+        const cartTotal = document.getElementById("cart-total");
+        const cartCount = document.getElementById("cart-count");
+        const totalPrice = document.getElementById("total-price");
+
+        if (cart.length === 0) {
+          cartItems.innerHTML =
+            '<p class="text-center text-gray-500 py-8">Your cart is empty</p>';
+          cartTotal.classList.add("hidden");
+          cartCount.classList.add("hidden");
+        } else {
+          cartItems.innerHTML = cart
+            .map(
+              (item) => `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex-1">
+                            <h4 class="font-medium">${item.name}</h4>
+                            <p class="text-sm text-gray-600">$${item.price.toFixed(2)} each</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="updateQuantity(${item.id}, -1)" class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                </svg>
+                            </button>
+                            <span class="font-medium min-w-[2rem] text-center">${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)" class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                            </button>
+                            <button onclick="removeFromCart(${item.id})" class="ml-2 text-red-500 hover:text-red-700">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `
+            )
+            .join("");
+
+          const total = cart.reduce(
+            (sum, item) => sum + item.price * item.quantity,
+            0
+          );
+          totalPrice.textContent = `$${total.toFixed(2)}`;
+          cartTotal.classList.remove("hidden");
+
+          const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+          cartCount.textContent = totalItems;
+          cartCount.classList.remove("hidden");
+        }
+      }
+
+      function toggleCart() {
+        const modal = document.getElementById("cart-modal");
+        modal.classList.toggle("hidden");
+        modal.classList.toggle("flex");
+      }
+
+      function proceedToCheckout() {
+        if (cart.length === 0) return;
+
+        toggleCart();
+        
+        const checkoutItems = document.getElementById("checkout-items");
+        const checkoutTotal = document.getElementById("checkout-total");
+        
+        checkoutItems.innerHTML = cart
+          .map(
+            (item) => `
+                <div class="flex justify-between text-sm">
+                    <span>${item.name} × ${item.quantity}</span>
+                    <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+            `
+          )
+          .join("");
+
+        const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        checkoutTotal.textContent = `$${total.toFixed(2)}`;
+
+        document.getElementById("checkout-modal").classList.remove("hidden");
+        document.getElementById("checkout-modal").classList.add("flex");
+      }
+
+      function closeCheckout() {
+        document.getElementById("checkout-modal").classList.add("hidden");
+        document.getElementById("checkout-modal").classList.remove("flex");
+      }
+
+      // Checkout form submission
+      document.getElementById("checkout-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = {
+          customerName: document.getElementById("customer-name").value,
+          customerEmail: document.getElementById("customer-email").value,
+          customerPhone: document.getElementById("customer-phone").value,
+          address: document.getElementById("delivery-address").value,
+          specialInstructions: document.getElementById("special-instructions").value,
+          items: cart,
+          total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        };
+
+        try {
+          const response = await fetch(`${API_BASE}/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            document.getElementById("order-id").textContent = result.data.id;
+            closeCheckout();
+            document.getElementById("success-modal").classList.remove("hidden");
+            document.getElementById("success-modal").classList.add("flex");
+            
+            // Clear cart
+            cart = [];
+            updateCartDisplay();
+            saveCartToStorage();
+          } else {
+            alert("Error placing order: " + result.message);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Error placing order. Please try again.");
+        }
+      });
+
+      function closeSuccess() {
+        document.getElementById("success-modal").classList.add("hidden");
+        document.getElementById("success-modal").classList.remove("flex");
+      }
+    </script>
+  </body>
+</html>
