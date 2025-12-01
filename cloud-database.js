@@ -13,10 +13,20 @@ class CloudDatabase {
     async initializeDatabase() {
         try {
             await this.createTables();
-            await this.seedSampleData();
-            console.log('✅ PostgreSQL database initialized successfully');
+            console.log('✅ Database tables created');
+            
+            // Try seeding, but don't fail if it doesn't work
+            try {
+                await this.seedSampleData();
+                console.log('✅ Sample data seeded');
+            } catch (seedError) {
+                console.log('⚠️ Sample data seeding skipped:', seedError.message);
+            }
+            
+            console.log('✅ PostgreSQL database initialized');
         } catch (error) {
             console.error('❌ Database initialization error:', error);
+            // Don't throw - let app continue without database
         }
     }
 

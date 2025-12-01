@@ -12,8 +12,20 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Initialize database
-const db = new CloudDatabase();
+// Initialize database with error handling
+let db;
+try {
+    db = new CloudDatabase();
+    console.log('✅ Database connection initialized');
+} catch (error) {
+    console.error('❌ Database connection failed:', error);
+    // Create a mock database object to prevent crashes
+    db = {
+        getAllProducts: async () => ({ success: false, message: 'Database unavailable' }),
+        createProduct: async () => ({ success: false, message: 'Database unavailable' }),
+        // Add other methods as needed
+    };
+}
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
