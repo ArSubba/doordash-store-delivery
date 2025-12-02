@@ -396,7 +396,8 @@
       id="product-modal"
       class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
     >
-      <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+      <div class="bg-white rounded-lg w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-lg font-semibold" id="modal-title">
             Add New Product
@@ -522,8 +523,6 @@
                 </label>
               </div>
 
-
-
               <!-- OR Divider -->
               <div class="flex items-center">
                 <div class="flex-1 border-t border-gray-300"></div>
@@ -587,6 +586,7 @@
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
 
@@ -655,14 +655,16 @@
 
       function showImagePreview(src) {
         const previewImg = document.getElementById("image-preview");
-        const previewContainer = document.getElementById("image-preview-container");
-        
+        const previewContainer = document.getElementById(
+          "image-preview-container"
+        );
+
         if (previewImg && previewContainer && src) {
           previewImg.src = src;
-          previewImg.onload = function() {
+          previewImg.onload = function () {
             previewContainer.classList.remove("hidden");
           };
-          previewImg.onerror = function() {
+          previewImg.onerror = function () {
             previewContainer.classList.add("hidden");
           };
         }
