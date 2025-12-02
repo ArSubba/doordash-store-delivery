@@ -555,12 +555,19 @@
               />
             </div>
             <input type="hidden" id="product-image" />
-            
+
             <!-- Image Preview -->
             <div id="image-preview-container" class="hidden mt-3">
               <label class="block text-sm font-medium mb-2">Preview:</label>
-              <div class="w-full h-32 bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-gray-300">
-                <img id="image-preview" src="" alt="Preview" class="w-full h-full object-cover">
+              <div
+                class="w-full h-32 bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-gray-300"
+              >
+                <img
+                  id="image-preview"
+                  src=""
+                  alt="Preview"
+                  class="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
@@ -607,9 +614,10 @@
           return;
         }
 
-        // Show preview
+        // Show preview immediately
         const reader = new FileReader();
         reader.onload = function (e) {
+          document.getElementById("product-image").value = e.target.result;
           showImagePreview(e.target.result);
         };
         reader.readAsDataURL(file);
@@ -638,10 +646,10 @@
       }
 
       function handleUrlChange() {
-        const url = document.getElementById("product-image-url").value;
+        const url = document.getElementById("product-image-url").value.trim();
         document.getElementById("product-image").value = url;
         document.getElementById("product-image-file").value = "";
-        
+
         if (url) {
           showImagePreview(url);
         } else {
@@ -653,14 +661,21 @@
         const previewImg = document.getElementById("image-preview");
         const previewContainer = document.getElementById("image-preview-container");
         
-        if (previewImg && previewContainer) {
+        if (previewImg && previewContainer && src) {
           previewImg.src = src;
-          previewContainer.classList.remove("hidden");
+          previewImg.onload = function() {
+            previewContainer.classList.remove("hidden");
+          };
+          previewImg.onerror = function() {
+            previewContainer.classList.add("hidden");
+          };
         }
       }
-      
+
       function hideImagePreview() {
-        const previewContainer = document.getElementById("image-preview-container");
+        const previewContainer = document.getElementById(
+          "image-preview-container"
+        );
         if (previewContainer) {
           previewContainer.classList.add("hidden");
         }
@@ -670,6 +685,10 @@
         document.getElementById("product-image-file").value = "";
         document.getElementById("product-image-url").value = "";
         document.getElementById("product-image").value = "";
+        const previewImg = document.getElementById("image-preview");
+        if (previewImg) {
+          previewImg.src = "";
+        }
         hideImagePreview();
       }
 
@@ -709,17 +728,17 @@
       async function loadAnalytics() {
         try {
           const response = await fetch(`${API_BASE}/admin/analytics`, {
-            credentials: 'include'
+            credentials: "include",
           });
-          
+
           if (!response.ok) {
             if (response.status === 401) {
               window.location.reload();
               return;
             }
-            throw new Error('Failed to load analytics');
+            throw new Error("Failed to load analytics");
           }
-          
+
           const data = await response.json();
 
           if (data.success) {
@@ -875,7 +894,6 @@
 
       // Product Modal Management
       function openProductModal(product = null) {
-        console.log('Opening product modal with product:', product);
         editingProduct = product;
         const modal = document.getElementById("product-modal");
         const title = document.getElementById("modal-title");
@@ -922,15 +940,17 @@
       }
 
       function editProduct(productId) {
-        console.log('Edit button clicked, productId:', productId);
-        console.log('Available products:', products);
+        console.log("Edit button clicked, productId:", productId);
+        console.log("Available products:", products);
         // Handle both string and number IDs
-        const product = products.find((p) => p.id == productId || p.id === parseInt(productId));
-        console.log('Found product:', product);
+        const product = products.find(
+          (p) => p.id == productId || p.id === parseInt(productId)
+        );
+        console.log("Found product:", product);
         if (product) {
           openProductModal(product);
         } else {
-          console.error('Product not found with ID:', productId);
+          console.error("Product not found with ID:", productId);
         }
       }
 
@@ -942,15 +962,15 @@
             `${API_BASE}/admin/products/${productId}`,
             {
               method: "DELETE",
-              credentials: 'include',
+              credentials: "include",
               headers: {
-                'Content-Type': 'application/json'
-              }
+                "Content-Type": "application/json",
+              },
             }
           );
 
           const result = await response.json();
-          
+
           if (response.ok) {
             loadProducts(); // Reload products
             alert("Product deleted successfully!");
@@ -958,7 +978,9 @@
             alert("Session expired. Please log in again.");
             showLoginModal();
           } else {
-            alert("Error deleting product: " + (result.message || 'Unknown error'));
+            alert(
+              "Error deleting product: " + (result.message || "Unknown error")
+            );
           }
         } catch (error) {
           console.error("Error deleting product:", error);
@@ -988,7 +1010,7 @@
                 `${API_BASE}/admin/products/${editingProduct.id}`,
                 {
                   method: "PUT",
-                  credentials: 'include',
+                  credentials: "include",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(formData),
                 }
@@ -996,14 +1018,14 @@
             } else {
               response = await fetch(`${API_BASE}/admin/products`, {
                 method: "POST",
-                credentials: 'include',
+                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
               });
             }
 
             const result = await response.json();
-            
+
             if (response.ok) {
               closeProductModal();
               loadProducts();
@@ -1016,7 +1038,9 @@
               alert("Session expired. Please log in again.");
               showLoginModal();
             } else {
-              alert("Error saving product: " + (result.message || 'Unknown error'));
+              alert(
+                "Error saving product: " + (result.message || "Unknown error")
+              );
             }
           } catch (error) {
             console.error("Error saving product:", error);
@@ -1028,17 +1052,17 @@
       async function loadOrders() {
         try {
           const response = await fetch(`${API_BASE}/orders`, {
-            credentials: 'include'
+            credentials: "include",
           });
-          
+
           if (!response.ok) {
             if (response.status === 401) {
               showLoginModal();
               return;
             }
-            throw new Error('Failed to load orders');
+            throw new Error("Failed to load orders");
           }
-          
+
           const data = await response.json();
 
           if (data.success) {
@@ -1114,7 +1138,7 @@
         try {
           const response = await fetch(`${API_BASE}/admin/orders/${orderId}`, {
             method: "PUT",
-            credentials: 'include',
+            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status: newStatus }),
           });
@@ -1154,13 +1178,13 @@
       async function checkAuth() {
         try {
           const response = await fetch(`${API_BASE}/auth/status`, {
-            credentials: 'include'
+            credentials: "include",
           });
-          
+
           if (!response.ok) {
             return false;
           }
-          
+
           const data = await response.json();
           return data.isAuthenticated;
         } catch (error) {
@@ -1172,49 +1196,49 @@
         try {
           const response = await fetch(`${API_BASE}/auth/login`, {
             method: "POST",
-            credentials: 'include',
+            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),
           });
-          
+
           if (!response.ok) {
-            console.error('Login failed:', response.status);
+            console.error("Login failed:", response.status);
             return false;
           }
-          
+
           const data = await response.json();
           return data.success;
         } catch (error) {
-          console.error('Login error:', error);
+          console.error("Login error:", error);
           return false;
         }
       }
 
       async function logout() {
         try {
-          const response = await fetch(`${API_BASE}/auth/logout`, { 
+          const response = await fetch(`${API_BASE}/auth/logout`, {
             method: "POST",
-            credentials: 'include',
+            credentials: "include",
             headers: {
-              'Content-Type': 'application/json'
-            }
+              "Content-Type": "application/json",
+            },
           });
-          
+
           if (response.ok) {
             // Clear any local storage
-            localStorage.removeItem('adminAuth');
+            localStorage.removeItem("adminAuth");
             // Redirect to refresh the page state
             window.location.reload();
           } else {
-            console.error('Logout failed:', await response.text());
+            console.error("Logout failed:", await response.text());
             // Force logout anyway
-            localStorage.removeItem('adminAuth');
+            localStorage.removeItem("adminAuth");
             showLoginModal();
           }
         } catch (error) {
           console.error("Logout error:", error);
           // Force logout anyway
-          localStorage.removeItem('adminAuth');
+          localStorage.removeItem("adminAuth");
           showLoginModal();
         }
       }
