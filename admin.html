@@ -472,12 +472,14 @@
               required
             >
               <option value="">Select Category</option>
-              <option value="Burgers">Burgers</option>
-              <option value="Pizza">Pizza</option>
-              <option value="Salads">Salads</option>
-              <option value="Drinks">Drinks</option>
-              <option value="Desserts">Desserts</option>
-              <option value="Appetizers">Appetizers</option>
+              <option value="Fresh Produce">Fresh Produce</option>
+              <option value="Meat">Meat</option>
+              <option value="Dairy & Eggs">Dairy & Eggs</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Snacks">Snacks</option>
+              <option value="Breakfast & Cereal">Breakfast & Cereal</option>
+              <option value="Deli">Deli</option>
+              <option value="Candy">Candy</option>
             </select>
           </div>
 
@@ -553,6 +555,14 @@
               />
             </div>
             <input type="hidden" id="product-image" />
+            
+            <!-- Image Preview -->
+            <div id="image-preview-container" class="hidden mt-3">
+              <label class="block text-sm font-medium mb-2">Preview:</label>
+              <div class="w-full h-32 bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-gray-300">
+                <img id="image-preview" src="" alt="Preview" class="w-full h-full object-cover">
+              </div>
+            </div>
           </div>
 
           <div class="flex gap-2">
@@ -600,8 +610,7 @@
         // Show preview
         const reader = new FileReader();
         reader.onload = function (e) {
-          document.getElementById("preview-img").src = e.target.result;
-          document.getElementById("image-preview").classList.remove("hidden");
+          showImagePreview(e.target.result);
         };
         reader.readAsDataURL(file);
 
@@ -630,10 +639,30 @@
 
       function handleUrlChange() {
         const url = document.getElementById("product-image-url").value;
+        document.getElementById("product-image").value = url;
+        document.getElementById("product-image-file").value = "";
+        
         if (url) {
-          document.getElementById("product-image").value = url;
-          document.getElementById("product-image-file").value = "";
-          clearImagePreview();
+          showImagePreview(url);
+        } else {
+          hideImagePreview();
+        }
+      }
+
+      function showImagePreview(src) {
+        const previewImg = document.getElementById("image-preview");
+        const previewContainer = document.getElementById("image-preview-container");
+        
+        if (previewImg && previewContainer) {
+          previewImg.src = src;
+          previewContainer.classList.remove("hidden");
+        }
+      }
+      
+      function hideImagePreview() {
+        const previewContainer = document.getElementById("image-preview-container");
+        if (previewContainer) {
+          previewContainer.classList.add("hidden");
         }
       }
 
@@ -641,12 +670,11 @@
         document.getElementById("product-image-file").value = "";
         document.getElementById("product-image-url").value = "";
         document.getElementById("product-image").value = "";
-        clearImagePreview();
+        hideImagePreview();
       }
 
       function clearImagePreview() {
-        document.getElementById("image-preview").classList.add("hidden");
-        document.getElementById("preview-img").src = "";
+        hideImagePreview();
       }
 
       // Tab Management
@@ -783,11 +811,15 @@
           .map(
             (product) => `
                 <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                    <img src="${
-                      product.image ||
-                      "https://via.placeholder.com/400x200?text=No+Image"
-                    }" 
-                         alt="${product.name}" class="w-full h-48 object-cover">
+                    <div class="w-full h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
+                        <img src="${
+                          product.image ||
+                          "https://via.placeholder.com/400x200?text=No+Image"
+                        }" 
+                             alt="${product.name}" 
+                             class="w-full h-full object-cover transition-transform hover:scale-105"
+                             onerror="this.src='https://via.placeholder.com/400x200?text=Image+Not+Found'">
+                    </div>
                     <div class="p-4">
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="font-semibold text-lg">${
@@ -869,6 +901,7 @@
               document.getElementById("product-image-url").value =
                 product.image;
             }
+            showImagePreview(product.image);
           }
         } else {
           title.textContent = "Add New Product";
